@@ -11,15 +11,7 @@ REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
 HAD_ERRORS=""
 
 copypkg() {
-    DBNEW="${REPODIR}/repo_new.db.new"
-    rm -fv "${DBNEW}"
-    find . -type f -iname '*.pkg.tar*' -print0 > "${DBNEW}"
-    ( cat "${DBNEW}" && echo -n "${REPODIR}" ) | xargs -0 cp -av
-    pushd "${REPODIR}"
-    cat "${DBNEW}" | xargs -0 repo-add repo_new.db.tar.xz
-    popd
-    rm -fv "${DBNEW}"
-    sudo "${REGISTER_SCRIPT}" "${REPODIR}"
+    cp -av -- *.pkg.tar* "${REPODIR}"
 }
 
 for pkg in `cat ./packages.txt`; do
@@ -52,11 +44,9 @@ for pkg in `cat ./packages.txt`; do
     rm -fv .done
     rm -fv *.pkg.tar*
     sudo pacman -Sy --noconfirm
-    if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
-        if [ -z "${MAKEPKG_FLAGS-}" ]; then
-            echo "${NEWREV}" > .done
-            copypkg
-        fi
+    if makepkg --syncdeps --noconfirm --needed --force --install; then
+        echo "${NEWREV}" > .done
+        copypkg
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="yes"
@@ -66,10 +56,6 @@ done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
     exit 1
-fi
-
-if [ ! -z "${MAKEPKG_FLAGS-}" ]; then
-    exit 0
 fi
 
 pushd repo_new
