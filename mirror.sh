@@ -30,10 +30,13 @@ for pkg in `cat ./packages.txt`; do
     fi
 
     rm -fv *.pkg.tar.zst
-    makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}
-    if [ -z "${MAKEPKG_FLAGS-}" ]; then
-        touch .done
-        cp -av *.pkg.tar.zst "${REPODIR}"
+    if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
+        if [ -z "${MAKEPKG_FLAGS-}" ]; then
+            touch .done
+            cp -av *.pkg.tar.zst "${REPODIR}"
+        fi
+    else
+        echo "Failed to build $pkg"
     fi
     popd
 done
