@@ -11,7 +11,7 @@ HAD_ERRORS=""
 
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
-    sudo pacman -U --noconfirm --needed -- *.pkg.tar*
+    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 pacman -U --noconfirm --needed
 }
 
 for pkg in `cat ./packages.txt`; do
