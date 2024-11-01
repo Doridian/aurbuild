@@ -1,10 +1,11 @@
 #!/bin/bash
 set -euo pipefail
 
-./repo-init.sh
-mkdir -p cache
+rm -rf repo_new/*
+mkdir -p cache repo repo_new
 
-REPODIR="$(realpath repo_new)"
+REPODIR="$(realpath ./repo_new)"
+REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
 
 copypkg() {
     PKGS=*.pkg.tar*
@@ -12,6 +13,7 @@ copypkg() {
     pushd "${REPODIR}"
     repo-add repo_new.db.tar.xz ${PKGS}
     popd
+    sudo "${REGISTER_SCRIPT}" "${REPODIR}"
 }
 
 for pkg in `cat ./packages.txt`; do

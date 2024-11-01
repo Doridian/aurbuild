@@ -3,7 +3,8 @@ set -euo pipefail
 
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
-chown -R aur:aur /home/aur /aur/repo /aur/cache /aur/repo_new
+chown -R aur:aur /home/aur /aur/repo /aur/cache
+chown aur:aur /aur
 
 if [ ! -z "${GPG_KEY_DATA-}" ]; then
     if [ -z "${GPG_KEY_ID-}" ]; then
@@ -16,7 +17,6 @@ fi
 while :;
 do
     echo '[MIRROR BEGIN]'
-    sudo -H -u aur ./repo-init.sh
     pacman -Syu --noconfirm --needed
     sudo -H -u aur ./mirror.sh
     echo '[MIRROR END]'

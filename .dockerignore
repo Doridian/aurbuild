@@ -1,11 +1,11 @@
 packages.txt
 packages.raw
-/cache
-/repo
-/repo_new
-/docker/cache
-/docker/repo
-/docker/repo_new
+/cache/
+/repo/
+/repo_new/
+/docker/cache/
+/docker/repo/
+/docker/repo_new/
 
 .git
 .gitignore

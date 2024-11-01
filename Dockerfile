@@ -30,10 +30,4 @@ VOLUME /aur/repo
 
 ENV MAKEPKG_FLAGS=""
 
-RUN ./repo-init.sh
-
-RUN echo '[repo_new]' >> /etc/pacman.conf && \
-    echo 'Server = file:///aur/repo_new' >> /etc/pacman.conf && \
-    echo 'SigLevel = Never' >> /etc/pacman.conf
-
 ENTRYPOINT [ "./entrypoint.sh" ]
