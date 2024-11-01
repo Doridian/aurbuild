@@ -28,7 +28,7 @@ while :;
 do
     echo '[MIRROR BEGIN]'
     pacman -Syu --noconfirm --needed
-    sudo --preserve-env=GPG_KEY_ID -H -u aur ./mirror.sh
+    sudo --preserve-env=GPG_KEY_ID -H -u aur ./mirror.sh || true
     echo '[MIRROR END]'
     sleep 1h
 done
