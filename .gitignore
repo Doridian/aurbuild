@@ -1,4 +1,8 @@
-/packages.raw
+packages.txt
+packages.raw
 /cache
 /repo
 /repo_new
+/docker/cache
+/docker/repo
+/docker/repo_new

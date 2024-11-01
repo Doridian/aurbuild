@@ -19,24 +19,21 @@ ENV PGID=1000
 
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    mkdir -p /home/aur
+    mkdir -p /home/aur /aur
 
-COPY . /home/aur/docker
-WORKDIR /home/aur/docker
+COPY docker/ /aur
+WORKDIR /aur
 ENV HOME=/home/aur
 
-VOLUME /home/aur/docker/cache
-VOLUME /home/aur/docker/repo
+VOLUME /aur/cache
+VOLUME /aur/repo
 
-RUN chown -R aur:aur /home/aur
 ENV MAKEPKG_FLAGS=""
 
-USER aur
 RUN ./repo-init.sh
-USER root
 
-RUN echo '[reponew]' >> /etc/pacman.conf && \
-    echo 'Server = file:///home/aur/docker/repo_new' >> /etc/pacman.conf && \
+RUN echo '[repo_new]' >> /etc/pacman.conf && \
+    echo 'Server = file:///aur/repo_new' >> /etc/pacman.conf && \
     echo 'SigLevel = Never' >> /etc/pacman.conf
 
 ENTRYPOINT [ "./entrypoint.sh" ]

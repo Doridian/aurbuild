@@ -1,8 +1,12 @@
-/packages.raw
+packages.txt
+packages.raw
 /cache
 /repo
 /repo_new
-/packages.txt
-/run.sh
+/docker/cache
+/docker/repo
+/docker/repo_new
+
 .git
 .gitignore
+/run.sh

@@ -3,7 +3,7 @@ set -euo pipefail
 
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
-chown -R aur:aur /home/aur
+chown -R aur:aur /home/aur /aur/repo /aur/cache /aur/repo_new
 
 if [ ! -z "${GPG_KEY_DATA-}" ]; then
     if [ -z "${GPG_KEY_ID-}" ]; then
