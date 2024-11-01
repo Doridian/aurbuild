@@ -11,7 +11,7 @@ if [ ! -z "${GPG_KEY_DATA-}" ]; then
         echo 'GPG_KEY_ID is not set, but GPG_KEY_DATA is set. Please set GPG_KEY_ID to the key ID of the key.'
         exit 1
     fi
-    sudo -H -u aur gpg --import - <<<"${GPG_KEY_DATA}"
+    sudo -H -u aur gpg --no-tty --batch --yes --import - <<<"${GPG_KEY_DATA}"
 fi
 
 if [ ! -z "${GPG_KEY_PATH-}" ]; then
@@ -19,7 +19,7 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
         echo 'GPG_KEY_ID is not set, but GPG_KEY_PATH is set. Please set GPG_KEY_ID to the key ID of the key.'
         exit 1
     fi
-    sudo -H -u aur gpg --import "${GPG_KEY_PATH}"
+    sudo -H -u aur gpg --no-tty --batch --yes --import "${GPG_KEY_PATH}"
 fi
 
 while :;
