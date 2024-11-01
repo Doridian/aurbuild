@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-rm -rf repo_new
+rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
 REPODIR="$(realpath repo_new)"
@@ -30,11 +30,17 @@ for pkg in `cat ./packages.txt`; do
     fi
 
     rm -fv *.pkg.tar.zst
-    makepkg --syncdeps --noconfirm --force
-    touch .done
-    cp -av *.pkg.tar.zst "${REPODIR}"
+    makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}
+    if [ -z "${MAKEPKG_FLAGS-}" ]; then
+        touch .done
+        cp -av *.pkg.tar.zst "${REPODIR}"
+    fi
     popd
 done
+
+if [ ! -z "${MAKEPKG_FLAGS-}" ]; then
+    exit 0
+fi
 
 pushd repo_new
 if [ ! -z "${GPG_KEY_ID-}" ]; then
