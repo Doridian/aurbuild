@@ -16,7 +16,7 @@ ENV PGID=1000
 
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    mkdir -p /home/aur /aur
+    mkdir -p /home/aur /aur /home/aur/.gnupg
 
 COPY docker/ /aur
 WORKDIR /aur

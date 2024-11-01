@@ -13,4 +13,4 @@ if [ ! -z "${SUDO_GID-}" ]; then
 fi
 
 docker build -t "${IMG_NAME}" .
-docker run --rm -it -v "$(pwd)/packages.txt:/aur/packages.txt:ro" -v "$(pwd)/cache:/aur/cache" -v "$(pwd)/repo:/aur/repo" -e PUID -e PGID "${IMG_NAME}"
+docker run --rm -it -v "$(pwd)/gpg.key:/gpg.key:ro" -v "$(pwd)/packages.txt:/aur/packages.txt:ro" -v "$(pwd)/cache:/aur/cache" -v "$(pwd)/repo:/aur/repo" -e PUID -e PGID -e GPG_KEY_ID -e GPG_KEY_PATH "${IMG_NAME}"
