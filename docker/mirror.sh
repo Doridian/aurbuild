@@ -12,7 +12,7 @@ REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
 copypkg() {
     DBNEW="${REPODIR}/repo_new.db.new"
     rm -fv "${DBNEW}"
-    find -iname '*.pkg.tar*' -print0 > "${DBNEW}"
+    find . -type f -iname '*.pkg.tar*' -print0 > "${DBNEW}"
     ( cat "${DBNEW}" && echo -n "${REPODIR}" ) | xargs -0 cp -av
     pushd "${REPODIR}"
     cat "${DBNEW}" | xargs -0 repo-add repo_new.db.tar.xz
