@@ -1,0 +1,5 @@
+/packages.raw
+/cache
+/repo
+.git
+.gitignore
