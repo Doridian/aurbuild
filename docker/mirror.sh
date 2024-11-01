@@ -43,7 +43,6 @@ for pkg in `cat ./packages.txt`; do
 
     rm -fv .done
     rm -fv *.pkg.tar*
-    sudo pacman -Sy --noconfirm
     if makepkg --syncdeps --noconfirm --needed --force --install; then
         echo "${NEWREV}" > .done
         copypkg
