@@ -2,5 +2,7 @@
 /cache
 /repo
 /repo_new
+/packages.txt
+/run.sh
 .git
 .gitignore

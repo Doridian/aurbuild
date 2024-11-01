@@ -15,7 +15,10 @@ fi
 
 while :;
 do
+    echo '[MIRROR BEGIN]'
+    sudo -H -u aur ./repo-init.sh
     pacman -Syu --noconfirm --needed
     sudo -H -u aur ./mirror.sh
+    echo '[MIRROR END]'
     sleep 1h
 done

@@ -17,9 +17,6 @@ RUN pacman -Syu --noconfirm --needed \
 ENV PUID=1000
 ENV PGID=1000
 
-RUN echo '[foxdenaur]' >> /etc/pacman.conf && \
-    echo 'Server = file:///home/aur/docker/repo' >> /etc/pacman.conf
-
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     mkdir -p /home/aur
@@ -31,7 +28,15 @@ ENV HOME=/home/aur
 VOLUME /home/aur/docker/cache
 VOLUME /home/aur/docker/repo
 
+RUN chown -R aur:aur /home/aur
 ENV MAKEPKG_FLAGS=""
 
+USER aur
+RUN ./repo-init.sh
 USER root
+
+RUN echo '[reponew]' >> /etc/pacman.conf && \
+    echo 'Server = file:///home/aur/docker/repo_new' >> /etc/pacman.conf && \
+    echo 'SigLevel = Never' >> /etc/pacman.conf
+
 ENTRYPOINT [ "./entrypoint.sh" ]

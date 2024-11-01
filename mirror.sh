@@ -1,13 +1,24 @@
 #!/bin/bash
 set -euo pipefail
 
-rm -rf repo_new/*
-mkdir -p cache repo repo_new
+./repo-init.sh
+mkdir -p cache
 
 REPODIR="$(realpath repo_new)"
 
+copypkg() {
+    PKGS=*.pkg.tar*
+    cp -av -- ${PKGS} "${REPODIR}"
+    pushd "${REPODIR}"
+    repo-add reponew.db.tar.xz ${PKGS}
+    popd
+}
+
 for pkg in `cat ./packages.txt`; do
     if [ -z "$pkg" ]; then
+        continue
+    fi
+    if [ "${pkg:0:1}" = "#" ]; then
         continue
     fi
 
@@ -24,19 +35,21 @@ for pkg in `cat ./packages.txt`; do
     pushd "cache/${pkg}"
     if [ "$OLDREV" = "$NEWREV" -a -f .done ]; then
         echo "$pkg is up to date"
-        cp -av *.pkg.tar.zst "${REPODIR}"
+        copypkg
         popd
         continue
     fi
 
     rm -fv *.pkg.tar.zst
+    sudo pacman -Sy --noconfirm
     if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
         if [ -z "${MAKEPKG_FLAGS-}" ]; then
             touch .done
-            cp -av *.pkg.tar.zst "${REPODIR}"
+            copypkg
         fi
     else
         echo "Failed to build $pkg"
+        exit 1
     fi
     popd
 done
@@ -46,6 +59,7 @@ if [ ! -z "${MAKEPKG_FLAGS-}" ]; then
 fi
 
 pushd repo_new
+rm -fv reponew.db*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --batch --yes --detach-sign --use-agent -u "${GPG_KEY_ID}" {} \;
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
