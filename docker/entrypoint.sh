@@ -19,7 +19,7 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
         echo 'GPG_KEY_ID is not set, but GPG_KEY_PATH is set. Please set GPG_KEY_ID to the key ID of the key.'
         exit 1
     fi
-    cat "${GPG_KEY_PATH}" | sudo -H -u aur gpg --import -
+    sudo -H -u aur gpg --import "${GPG_KEY_PATH}"
 fi
 
 while :;
