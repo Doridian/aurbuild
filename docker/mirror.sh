@@ -7,7 +7,6 @@ rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
 REPODIR="$(realpath ./repo_new)"
-REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
 HAD_ERRORS=""
 
 copypkg() {
