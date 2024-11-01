@@ -49,7 +49,7 @@ for pkg in `cat ./packages.txt`; do
     fi
 
     rm -fv .done
-    rm -fv *.pkg.tar.zst
+    rm -fv *.pkg.tar*
     sudo pacman -Sy --noconfirm
     if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
         if [ -z "${MAKEPKG_FLAGS-}" ]; then
