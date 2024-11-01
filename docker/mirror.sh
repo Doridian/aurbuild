@@ -43,7 +43,7 @@ for pkg in `cat ./packages.txt`; do
 
     rm -fv .done
     rm -fv *.pkg.tar*
-    if makepkg --syncdeps --noconfirm --needed --force --install; then
+    if makepkg --syncdeps --noconfirm --needed --force; then
         echo "${NEWREV}" > .done
         copypkg
     else
