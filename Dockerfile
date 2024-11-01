@@ -1,6 +1,6 @@
 FROM archlinux:base-devel
 
-RUN pacman -Syu --noconfirm --needed git wget sudo
+RUN pacman -Syu --noconfirm --needed git wget sudo rsync
 
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
