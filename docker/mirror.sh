@@ -24,7 +24,6 @@ for pkg in `cat ./packages.txt`; do
         continue
     fi
 
-    OLDREV=$(git -C "cache/$pkg" rev-parse HEAD 2>/dev/null || true)
     if [ ! -d "cache/$pkg" ]; then
         echo "Cloning $pkg"
         git clone -- "https://aur.archlinux.org/$pkg.git" "cache/$pkg"
@@ -32,10 +31,12 @@ for pkg in `cat ./packages.txt`; do
         echo "Updating $pkg"
         git -C "cache/$pkg" pull
     fi
+
+    OLDREV=$(cat "cache/$pkg/.done" 2>/dev/null || true)
     NEWREV=$(git -C "cache/$pkg" rev-parse HEAD)
 
     pushd "cache/${pkg}"
-    if [ "$OLDREV" = "$NEWREV" -a -f .done ]; then
+    if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
         copypkg
         popd
@@ -47,7 +48,7 @@ for pkg in `cat ./packages.txt`; do
     sudo pacman -Sy --noconfirm
     if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
         if [ -z "${MAKEPKG_FLAGS-}" ]; then
-            touch .done
+            echo "${NEWREV}" > .done
             copypkg
         fi
     else
