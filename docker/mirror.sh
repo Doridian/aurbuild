@@ -1,6 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
+set -x
+
 rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
@@ -66,7 +68,7 @@ if [ ! -z "${MAKEPKG_FLAGS-}" ]; then
 fi
 
 pushd repo_new
-rm -fv repo_new.db*
+rm -fv repo_new.*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --batch --yes --detach-sign --use-agent -u "${GPG_KEY_ID}" {} \;
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
