@@ -17,6 +17,9 @@ RUN pacman -Syu --noconfirm --needed \
 ENV PUID=1000
 ENV PGID=1000
 
+RUN echo '[foxdenaur]' >> /etc/pacman.conf && \
+    echo 'Server = file:///home/aur/docker/repo' >> /etc/pacman.conf
+
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
     mkdir -p /home/aur
