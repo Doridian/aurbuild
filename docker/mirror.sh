@@ -42,6 +42,7 @@ for pkg in `cat ./packages.txt`; do
         continue
     fi
 
+    rm -fv .done
     rm -fv *.pkg.tar.zst
     sudo pacman -Sy --noconfirm
     if makepkg --syncdeps --noconfirm --needed --force ${MAKEPKG_FLAGS-}; then
