@@ -14,6 +14,14 @@ if [ ! -z "${GPG_KEY_DATA-}" ]; then
     sudo -H -u aur gpg --import - <<<"${GPG_KEY_DATA}"
 fi
 
+if [ ! -z "${GPG_KEY_PATH-}" ]; then
+    if [ -z "${GPG_KEY_ID-}" ]; then
+        echo 'GPG_KEY_ID is not set, but GPG_KEY_PATH is set. Please set GPG_KEY_ID to the key ID of the key.'
+        exit 1
+    fi
+    sudo -H -u aur gpg --import "${GPG_KEY_PATH}"
+fi
+
 while :;
 do
     echo '[MIRROR BEGIN]'
