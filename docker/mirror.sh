@@ -15,6 +15,7 @@ copypkg() {
     pushd "${REPODIR}"
     cat "${DBNEW}" | xargs -0 repo-add repo_new.db.tar.xz
     popd
+    rm -fv "${DBNEW}"
     sudo "${REGISTER_SCRIPT}" "${REPODIR}"
 }
 
