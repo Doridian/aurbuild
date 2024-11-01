@@ -44,6 +44,7 @@ for pkg in `cat ./packages.txt`; do
     rm -fv .done
     rm -fv *.pkg.tar*
     if makepkg --syncdeps --noconfirm --needed --force; then
+        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}" {} \;
         echo "${NEWREV}" > .done
         copypkg
     else
@@ -60,7 +61,6 @@ fi
 pushd repo_new
 rm -fv repo_new.*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}" {} \;
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
 else
     repo-add foxdenaur.db.tar.xz *.pkg.tar*
