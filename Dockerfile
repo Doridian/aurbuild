@@ -8,11 +8,7 @@ RUN pacman -Syu --noconfirm --needed \
             git \
             wget \
             sudo \
-            rsync \
-            # Below here should be in PKGBUILD but isnt \
-            libxkbcommon \
-            libcanberra \
-            gst-plugins-bad
+            rsync
 
 ENV PUID=1000
 ENV PGID=1000
