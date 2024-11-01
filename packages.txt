@@ -5,9 +5,6 @@ davinci-resolve
 dimland-git
 dino-plus-plus-git
 kanidm
-kanidm-clients
-kanidm-server
-kanidm-unixd-clients
 ledmon
 lgogdownloader
 liblxi
