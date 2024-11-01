@@ -11,6 +11,7 @@ HAD_ERRORS=""
 
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
+    sudo pacman -U --noconfirm --needed -- *.pkg.tar*
 }
 
 for pkg in `cat ./packages.txt`; do
