@@ -8,6 +8,7 @@ mkdir -p cache repo repo_new
 
 REPODIR="$(realpath ./repo_new)"
 REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
+HAD_ERRORS=""
 
 copypkg() {
     DBNEW="${REPODIR}/repo_new.db.new"
@@ -58,10 +59,14 @@ for pkg in `cat ./packages.txt`; do
         fi
     else
         echo "Failed to build $pkg"
-        exit 1
+        HAD_ERRORS="yes"
     fi
     popd
 done
+
+if [ ! -z "${HAD_ERRORS}" ]; then
+    exit 1
+fi
 
 if [ ! -z "${MAKEPKG_FLAGS-}" ]; then
     exit 0
