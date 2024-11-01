@@ -1,0 +1,42 @@
+name: Run linter and build
+
+on:
+    pull_request:
+        types:
+            - opened
+            - reopened
+            - synchronize
+    merge_group: {}
+    workflow_call: {}
+
+jobs:
+    lint_and_build:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            checks: write
+        steps:
+            - name: Check out the repo
+              uses: actions/checkout@v4
+            - name: Update Docker version
+              env:
+                  DOCKER_CLI_EXPERIMENTAL: enabled
+              uses: crazy-max/ghaction-setup-docker@v3
+              with:
+                  channel: stable
+                  daemon-config: |
+                      {
+                        "features": {
+                          "containerd-snapshotter": true
+                        }
+                      }
+            - name: Test build container image
+              uses: docker/build-push-action@v6
+              with:
+                  push: false
+                  build-args: |
+                      GIT_REVISION=${{ github.sha }}
+                  tags: |
+                      ghcr.io/doridian/aurbuild/aurbuild:latest
+                  cache-from: type=gha
+                  cache-to: type=gha
