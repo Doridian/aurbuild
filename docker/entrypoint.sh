@@ -26,7 +26,7 @@ while :;
 do
     echo '[MIRROR BEGIN]'
     pacman -Syu --noconfirm --needed
-    sudo -H -u aur ./mirror.sh
+    sudo -E -H -u aur ./mirror.sh
     echo '[MIRROR END]'
     sleep 1h
 done
