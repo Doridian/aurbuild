@@ -8,10 +8,12 @@ REPODIR="$(realpath ./repo_new)"
 REGISTER_SCRIPT="$(realpath ./repo-register.sh)"
 
 copypkg() {
-    PKGS=*.pkg.tar*
-    cp -av -- ${PKGS} "${REPODIR}"
+    DBNEW="${REPODIR}/repo_new.db.new"
+    rm -fv "${DBNEW}"
+    find -iname '*.pkg.tar*' -print0 > "${DBNEW}"
+    ( cat "${DBNEW}" && echo -n "${REPODIR}" ) | xargs -0 cp -av
     pushd "${REPODIR}"
-    repo-add repo_new.db.tar.xz ${PKGS}
+    cat "${DBNEW}" | xargs -0 repo-add repo_new.db.tar.xz
     popd
     sudo "${REGISTER_SCRIPT}" "${REPODIR}"
 }

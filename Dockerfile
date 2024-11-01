@@ -8,7 +8,8 @@ RUN pacman -Syu --noconfirm --needed \
             git \
             wget \
             sudo \
-            rsync
+            rsync \
+            coreutils
 
 ENV PUID=1000
 ENV PGID=1000
