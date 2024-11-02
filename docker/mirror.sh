@@ -51,12 +51,13 @@ for pkg in `cat ./packages.txt`; do
         copypkg
     else
         echo "Failed to build $pkg"
-        HAD_ERRORS="yes"
+        HAD_ERRORS="${HAD_ERRORS} ${pkg}"
     fi
     popd
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
+    echo "Failed to build: ${HAD_ERRORS}"
     exit 1
 fi
 
