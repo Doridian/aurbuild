@@ -8,6 +8,7 @@ mkdir -p cache repo repo_new
 
 REPODIR="$(realpath ./repo_new)"
 HAD_ERRORS=""
+UPDATED_PACKAGES=""
 
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
@@ -53,12 +54,18 @@ for pkg in `cat ./packages.txt`; do
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
     fi
+    UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     popd
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
     echo "Failed to build: ${HAD_ERRORS}"
     exit 1
+fi
+
+if [ -z "${UPDATED_PACKAGES}" -a -f repo/foxdenaur.db ]; then
+    echo 'No packages updated. Skipping repo generation'
+    exit 0
 fi
 
 pushd repo_new
