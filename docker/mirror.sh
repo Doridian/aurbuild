@@ -1,8 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-set -x
-
 rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
@@ -23,13 +21,22 @@ for pkg in `cat ./packages.txt`; do
         continue
     fi
 
+    if [[ "$pkg" == *"//"* || "$pkg" == *":"* ]]; then
+        gitrepo="$pkg"
+    else
+        gitrepo="https://aur.archlinux.org/$pkg.git"
+    fi
+
     if [ ! -d "cache/$pkg" ]; then
         echo "Cloning $pkg"
-        git clone -- "https://aur.archlinux.org/$pkg.git" "cache/$pkg"
+        git clone -- "$gitrepo" "cache/$pkg"
     else
         echo "Updating $pkg"
-        git -C "cache/$pkg" pull
+        git -C "cache/$pkg" remote set-url origin "$gitrepo"
+        git -C "cache/$pkg" fetch
     fi
+    git -C "cache/$pkg" checkout master
+    git -C "cache/$pkg" reset --hard origin/master
 
     OLDREV=$(cat "cache/$pkg/.done" 2>/dev/null || true)
     NEWREV=$(git -C "cache/$pkg" rev-parse HEAD)
