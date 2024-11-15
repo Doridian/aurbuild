@@ -23,6 +23,8 @@ for pkg in `cat ./packages.txt`; do
 
     if [[ "$pkg" == *":"* ]]; then
         gitrepo="$pkg"
+        # Extract part after last slash, but before .git
+        pkg="$(echo "$pkg" | rev | cut -d/ -f1 | rev | sed 's~.git$~~')"
     else
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
