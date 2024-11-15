@@ -21,7 +21,7 @@ for pkg in `cat ./packages.txt`; do
         continue
     fi
 
-    if [[ "$pkg" == *"//"* || "$pkg" == *":"* ]]; then
+    if [[ "$pkg" == *":"* ]]; then
         gitrepo="$pkg"
     else
         gitrepo="https://aur.archlinux.org/$pkg.git"
