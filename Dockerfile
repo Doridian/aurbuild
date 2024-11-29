@@ -27,6 +27,4 @@ ENV HOME=/home/aur
 VOLUME /aur/cache
 VOLUME /aur/repo
 
-ENV MAKEPKG_FLAGS=""
-
 ENTRYPOINT [ "./entrypoint.sh" ]

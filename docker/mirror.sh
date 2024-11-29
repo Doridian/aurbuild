@@ -53,7 +53,7 @@ for pkg in `cat ./packages.txt`; do
 
     rm -fv .done
     rm -fv *.pkg.tar*
-    if makepkg --syncdeps --noconfirm --needed --force; then
+    if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         if [ ! -z "${GPG_KEY_ID-}" ]; then
             find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}" {} \;
         fi
