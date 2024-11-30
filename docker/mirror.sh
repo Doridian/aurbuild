@@ -38,7 +38,7 @@ for pkg in `cat ./packages.txt`; do
         git -C "cache/$pkg" fetch
     fi
     git -C "cache/$pkg" checkout HEAD
-    git -C "cache/$pkg" reset --hard "origin/$(git branch --show-current)"
+    git -C "cache/$pkg" reset --hard "origin/$(git branch -C "cache/$pkg" --show-current)"
 
     OLDREV=$(cat "cache/$pkg/.done" 2>/dev/null || true)
     NEWREV=$(git -C "cache/$pkg" rev-parse HEAD)
