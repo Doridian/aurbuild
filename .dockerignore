@@ -1,6 +1,5 @@
 *.key
 *.pem
-*.asc
 packages.txt
 packages.raw
 /cache/

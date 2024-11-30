@@ -21,8 +21,10 @@ RUN useradd aur && \
     chmod 700 /home/aur/.gnupg /home/aur
 
 COPY docker/ /aur
-WORKDIR /aur
 ENV HOME=/home/aur
+WORKDIR /aur/keys/pgp
+RUN find -type f -exec gpg --import {} \;
+WORKDIR /aur
 
 VOLUME /aur/cache
 VOLUME /aur/repo

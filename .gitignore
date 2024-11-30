@@ -1,5 +1,4 @@
 *.key
-*.asc
 *.pem
 packages.txt
 packages.raw
