@@ -21,7 +21,7 @@ jobs:
             - name: Update Docker version
               env:
                   DOCKER_CLI_EXPERIMENTAL: enabled
-              uses: crazy-max/ghaction-setup-docker@v3
+              uses: docker/setup-docker-action@v4
               with:
                   channel: stable
                   daemon-config: |
