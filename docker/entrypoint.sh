@@ -24,10 +24,14 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
     sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import "${GPG_KEY_PATH}"
 fi
 
+pacman_up() {
+	pacman -Syu --noconfirm --needed
+}
+
 while :;
 do
     echo '[MIRROR BEGIN]'
-    pacman -Syu --noconfirm --needed
+    pacman_up || (pacman -Scc && pacman_up)
     sudo --preserve-env=GPG_KEY_ID -H -u aur ./mirror.sh || true
     echo '[MIRROR END]'
     sleep 1h
