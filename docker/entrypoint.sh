@@ -28,10 +28,14 @@ pacman_up() {
 	pacman -Syu --noconfirm --needed
 }
 
+pacman_clear() {
+    yes | pacman -Scc
+}
+
 while :;
 do
     echo '[MIRROR BEGIN]'
-    pacman_up || (pacman -Scc && pacman_up)
+    pacman_up || (pacman_clear && pacman_up)
     sudo --preserve-env=GPG_KEY_ID -H -u aur ./mirror.sh || true
     echo '[MIRROR END]'
     sleep 1h
