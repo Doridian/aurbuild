@@ -1,7 +1,6 @@
 FROM archlinux:base-devel
 
 COPY docker/pacman.conf /etc/pacman.conf
-RUN rm -vf /usr/lib/libalpm/hooks/*
 
 RUN pacman -Syu --noconfirm --needed \
             cmake \
