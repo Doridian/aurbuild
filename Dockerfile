@@ -1,5 +1,8 @@
 FROM archlinux:base-devel
 
+COPY docker/pacman.conf /etc/pacman.conf
+RUN rm -vf /usr/lib/libalpm/hooks/*
+
 RUN pacman -Syu --noconfirm --needed \
             cmake \
             make \
@@ -10,9 +13,6 @@ RUN pacman -Syu --noconfirm --needed \
             sudo \
             rsync \
             coreutils
-
-COPY docker/pacman.conf /etc/pacman.conf
-RUN rm -vf /usr/lib/libalpm/hooks/*
 
 ENV PUID=1000
 ENV PGID=1000
