@@ -11,6 +11,9 @@ RUN pacman -Syu --noconfirm --needed \
             rsync \
             coreutils
 
+COPY docker/pacman.conf /etc/pacman.conf
+RUN rm -vf /usr/lib/libalpm/hooks/*
+
 ENV PUID=1000
 ENV PGID=1000
 
