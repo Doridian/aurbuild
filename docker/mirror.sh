@@ -49,10 +49,8 @@ for pkg in `cat ./packages.txt`; do
         if copypkg; then
             popd
             continue
-        else
-            popd
-            echo "$pkg failed to install pre-built. Rebuilding."
         fi
+        echo "$pkg failed to install pre-built. Rebuilding."
     fi
 
     rm -fv .done
