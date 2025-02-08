@@ -46,9 +46,13 @@ for pkg in `cat ./packages.txt`; do
     pushd "cache/${pkg}"
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
-        copypkg
-        popd
-        continue
+        if copypkg; then
+            popd
+            continue
+        else
+            popd
+            echo "$pkg failed to install pre-built. Rebuilding."
+        fi
     fi
 
     rm -fv .done
