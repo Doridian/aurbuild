@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-chown root:root /etc/sudo.conf /usr/sbin/sudo
-chmod +s /usr/sbin/sudo
-
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
 mkdir -p /home/aur/.gnupg
