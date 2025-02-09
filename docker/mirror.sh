@@ -8,6 +8,11 @@ REPODIR="$(realpath ./repo_new)"
 HAD_ERRORS=""
 UPDATED_PACKAGES=""
 
+if [ -f /gpg/pin ]; then
+    gpg --use-agent --card-status
+    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin sign --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null ./packages.txt
+fi
+
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 sudo pacman -U --noconfirm --needed
@@ -58,7 +63,7 @@ for pkg in `cat ./packages.txt`; do
     git clean -fdx
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         if [ ! -z "${GPG_KEY_ID-}" ]; then
-            find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 -n1 gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
+            find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 -n1 gpg --use-agent --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
         fi
         echo "${NEWREV}" > .done
         copypkg
