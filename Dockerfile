@@ -2,6 +2,7 @@ FROM archlinux:base-devel
 
 COPY docker/pacman.conf /etc/pacman.conf
 
+
 RUN pacman -Syu --noconfirm --needed \
             cmake \
             make \
@@ -11,7 +12,13 @@ RUN pacman -Syu --noconfirm --needed \
             wget \
             sudo \
             rsync \
-            coreutils
+            coreutils \
+            mkinitcpio
+
+RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen-dori.preset
+RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen.preset
+RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-lts.preset
+RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux.preset
 
 ENV PUID=1000
 ENV PGID=1000
