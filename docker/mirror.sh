@@ -58,7 +58,7 @@ for pkg in `cat ./packages.txt`; do
     git clean -fdx
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         if [ ! -z "${GPG_KEY_ID-}" ]; then
-            find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print -exec gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}" {} \;
+            find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 -n1 gpg --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
         fi
         echo "${NEWREV}" > .done
         copypkg
