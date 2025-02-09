@@ -27,7 +27,9 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
 fi
 
 pacman_up() {
+    # This gets rid of all local packages, such that we only have repo packages
     pacman -Qm | cut -d' ' -f1 | xargs sudo pacman -R --noconfirm
+    # Those (repo packages) get updated here
     pacman -Syu --noconfirm --needed
 }
 
