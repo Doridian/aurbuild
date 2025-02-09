@@ -10,7 +10,7 @@ UPDATED_PACKAGES=""
 
 if [ -f /gpg/pin ]; then
     gpg --use-agent --card-status
-    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin sign --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null ./packages.txt
+    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null ./packages.txt
 fi
 
 copypkg() {
