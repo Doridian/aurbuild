@@ -27,7 +27,8 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
 fi
 
 pacman_up() {
-	pacman -Syu --noconfirm --needed
+    pacman -Qm | cut -d' ' -f1 | xargs sudo pacman -R --noconfirm
+    pacman -Syu --noconfirm --needed
 }
 
 pacman_clear() {
