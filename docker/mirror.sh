@@ -4,6 +4,8 @@ set -euo pipefail
 rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
+/aur/premirror.sh
+
 REPODIR="$(realpath ./repo_new)"
 HAD_ERRORS=""
 UPDATED_PACKAGES=""
