@@ -8,6 +8,7 @@ mkdir -p cache repo repo_new
 
 REPODIR="$(realpath ./repo_new)"
 HAD_ERRORS=""
+HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
 
 if [ -f /gpg/pin ]; then
@@ -89,12 +90,17 @@ for pkg in `cat ./packages.txt`; do
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
+        copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
     UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
     echo "Failed to build: ${HAD_ERRORS}"
+fi
+
+if [ ! -z "${HAD_FATAL_ERRORS}" ]; then
+    echo "Failed build fatally: ${HAD_FATAL_ERRORS}"
     exit 1
 fi
 
