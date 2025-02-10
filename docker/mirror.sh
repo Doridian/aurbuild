@@ -1,10 +1,12 @@
 #!/bin/bash
 set -euo pipefail
 
+WORKDIR="$(realpath "$(pwd)")"
+
 rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
-/aur/premirror.sh
+./premirror.sh
 
 REPODIR="$(realpath ./repo_new)"
 HAD_ERRORS=""
@@ -27,8 +29,6 @@ copypkg() {
     ls *.sig 2>/dev/null >/dev/null || signpkg
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
 }
-
-WORKDIR="$(realpath "$(pwd)")"
 
 for pkg in `cat ./packages.txt`; do
     if [ -z "$pkg" ]; then
@@ -108,7 +108,7 @@ if [ ! -z "${HAD_FATAL_ERRORS}" ]; then
     exit 1
 fi
 
-if [ -z "${UPDATED_PACKAGES}" -a -f repo/foxdenaur.db ]; then
+if [ -z "${UPDATED_PACKAGES}" -a -f "${WORKDIR}/repo/foxdenaur.db" ]; then
     echo '[AURBUILD] No packages updated. Skipping repo generation'
     exit 0
 fi
