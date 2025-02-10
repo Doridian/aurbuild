@@ -100,18 +100,20 @@ for pkg in `cat ./packages.txt`; do
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
-    echo "Failed to build: ${HAD_ERRORS}"
+    echo "[AURBUILD] Failed to build: ${HAD_ERRORS}"
 fi
 
 if [ ! -z "${HAD_FATAL_ERRORS}" ]; then
-    echo "Failed build fatally: ${HAD_FATAL_ERRORS}"
+    echo "[AURBUILD] Failed build fatally: ${HAD_FATAL_ERRORS}"
     exit 1
 fi
 
 if [ -z "${UPDATED_PACKAGES}" -a -f repo/foxdenaur.db ]; then
-    echo 'No packages updated. Skipping repo generation'
+    echo '[AURBUILD] No packages updated. Skipping repo generation'
     exit 0
 fi
+
+echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
 
 cd "${WORKDIR}/repo_new"
 rm -fv repo_new.*
