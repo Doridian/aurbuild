@@ -91,6 +91,7 @@ for pkg in `cat ./packages.txt`; do
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
+        cd "${CACHEDIR}"
         copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
 done
