@@ -18,14 +18,14 @@ fi
 
 signpkg() {
     if [ ! -z "${GPG_KEY_ID-}" ]; then
-        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 -n1 gpg --use-agent --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
+        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 -n1 gpg --use-agent --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
     fi
 }
 
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
     ls *.sig 2>/dev/null >/dev/null || signpkg
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 sudo pacman -U --noconfirm --needed
+    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
 }
 
 WORKDIR="$(realpath "$(pwd)")"
@@ -84,13 +84,16 @@ for pkg in `cat ./packages.txt`; do
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
-        cd "${CACHEDIR}"
         rsync -a "${BUILDDIR}/" "${CACHEDIR}/"
+
+        cd "${CACHEDIR}"
         copypkg
+
         UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
+
         cd "${CACHEDIR}"
         copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
@@ -113,7 +116,7 @@ fi
 cd "${WORKDIR}/repo_new"
 rm -fv repo_new.*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
+    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
 else
     repo-add foxdenaur.db.tar.xz *.pkg.tar*
 fi
