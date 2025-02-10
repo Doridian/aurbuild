@@ -23,9 +23,11 @@ signpkg() {
 
 copypkg() {
     cp -av -- *.pkg.tar* "${REPODIR}"
-    ls *.sig 2>/dev/null || signpkg
+    ls *.sig 2>/dev/null >/dev/null || signpkg
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 sudo pacman -U --noconfirm --needed
 }
+
+WORKDIR="$(realpath "$(pwd)")"
 
 for pkg in `cat ./packages.txt`; do
     if [ -z "$pkg" ]; then
@@ -43,6 +45,8 @@ for pkg in `cat ./packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
+    cd "${WORKDIR}"
+
     if [ ! -d "cache/$pkg" ]; then
         echo "Cloning $pkg"
         git clone -- "$gitrepo" "cache/$pkg"
@@ -56,30 +60,37 @@ for pkg in `cat ./packages.txt`; do
 
     OLDREV=$(cat "cache/$pkg/.done" 2>/dev/null || true)
     NEWREV=$(git -C "cache/$pkg" rev-parse HEAD)
+    CACHEDIR="$(realpath "cache/$pkg")"
 
-    pushd "cache/${pkg}"
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
+        cd "${CACHEDIR}"
         if copypkg; then
-            popd
             continue
         fi
         echo "$pkg failed to install pre-built. Rebuilding."
     fi
 
+    BUILDDIR="/tmp/aurbuild-$pkg"
+    rm -rf "${BUILDDIR}"
+    mkdir -p "${BUILDDIR}"
+    rsync -a "${CACHEDIR}/" "${BUILDDIR}/"
+
+    cd "${BUILDDIR}"
     rm -fv .done
     rm -fv *.pkg.tar*
     git clean -fdx
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
+        cd "${CACHEDIR}"
+        rsync -a "${BUILDDIR}/" "${CACHEDIR}/"
         copypkg
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
     fi
     UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
-    popd
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
@@ -92,13 +103,13 @@ if [ -z "${UPDATED_PACKAGES}" -a -f repo/foxdenaur.db ]; then
     exit 0
 fi
 
-pushd repo_new
+cd "${WORKDIR}/repo_new"
 rm -fv repo_new.*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
 else
     repo-add foxdenaur.db.tar.xz *.pkg.tar*
 fi
-popd
+cd "${WORKDIR}"
 
 rsync --delete -av repo_new/ repo/
