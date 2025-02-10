@@ -87,6 +87,7 @@ for pkg in `cat ./packages.txt`; do
         cd "${CACHEDIR}"
         rsync -a "${BUILDDIR}/" "${CACHEDIR}/"
         copypkg
+        UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
