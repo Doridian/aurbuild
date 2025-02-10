@@ -93,7 +93,6 @@ for pkg in `cat ./packages.txt`; do
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
         copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
-    UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
