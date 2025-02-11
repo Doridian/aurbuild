@@ -75,7 +75,7 @@ for pkg in `cat ./packages.txt`; do
     BUILDDIR="/tmp/aurbuild-$pkg"
     rm -rf "${BUILDDIR}"
     mkdir -p "${BUILDDIR}"
-    rsync -a "${CACHEDIR}/" "${BUILDDIR}/"
+    rsync --delete -a "${CACHEDIR}/" "${BUILDDIR}/"
 
     cd "${BUILDDIR}"
     rm -fv .done
@@ -84,7 +84,7 @@ for pkg in `cat ./packages.txt`; do
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
-        rsync -a "${BUILDDIR}/" "${CACHEDIR}/"
+        rsync --delete -a "${BUILDDIR}/" "${CACHEDIR}/"
 
         cd "${CACHEDIR}"
         copypkg
