@@ -25,9 +25,9 @@ signpkg() {
 }
 
 copypkg() {
-    cp -av -- *.pkg.tar* "${REPODIR}"
     ls *.sig 2>/dev/null >/dev/null || signpkg
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
+    cp -av -- *.pkg.tar* "${REPODIR}"
 }
 
 for pkg in `cat ./packages.txt`; do
