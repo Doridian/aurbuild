@@ -25,8 +25,13 @@ signpkg() {
 }
 
 copypkg() {
+    # Fail if no artifacts
+    ls *.pkg.tar* 2>/dev/null >/dev/null || false
+    # Try to re-sign if no signature
     ls *.sig 2>/dev/null >/dev/null || signpkg
+    # Try local install
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
+    # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
 }
 
