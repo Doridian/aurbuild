@@ -29,12 +29,12 @@ copypkg() {
     ls *.pkg.tar* 2>/dev/null >/dev/null || false
     # Try to re-sign if no signature
     ls *.sig 2>/dev/null >/dev/null || signpkg
-    # Try local install
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
+    if [ ! -z "${1-}" ]; then
+        # Try local install
+        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
+    fi
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
-    ls *.sig 2>/dev/null || signpkg
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 sudo pacman -U --noconfirm --needed
 }
 
 for pkg in `cat ./packages.txt`; do
@@ -77,8 +77,8 @@ for pkg in `cat ./packages.txt`; do
 
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
-        if copypkg; then
-            popd
+        cd "${CACHEDIR}"
+        if copypkg "${do_install}"; then
             continue
         fi
         echo "$pkg failed to install pre-built. Rebuilding."
@@ -97,13 +97,18 @@ for pkg in `cat ./packages.txt`; do
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
-        copypkg
+        rsync --delete -a "${BUILDDIR}/" "${CACHEDIR}/"
+
+        cd "${CACHEDIR}"
+        copypkg "${do_install}"
+
+        UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
 
         cd "${CACHEDIR}"
-        copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
+        copypkg "${do_install}" || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
 done
 
