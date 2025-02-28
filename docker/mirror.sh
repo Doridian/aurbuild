@@ -33,6 +33,8 @@ copypkg() {
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
+    ls *.sig 2>/dev/null || signpkg
+    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -0 sudo pacman -U --noconfirm --needed
 }
 
 for pkg in `cat ./packages.txt`; do
@@ -41,6 +43,12 @@ for pkg in `cat ./packages.txt`; do
     fi
     if [ "${pkg:0:1}" = "#" ]; then
         continue
+    fi
+
+    do_install=''
+    if [ "${pkg:0:1}" = "!" ]; then
+        do_install=true
+        pkg="${pkg:1}"
     fi
 
     if [[ "$pkg" == *":"* ]]; then
@@ -69,8 +77,8 @@ for pkg in `cat ./packages.txt`; do
 
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
-        cd "${CACHEDIR}"
         if copypkg; then
+            popd
             continue
         fi
         echo "$pkg failed to install pre-built. Rebuilding."
@@ -89,12 +97,7 @@ for pkg in `cat ./packages.txt`; do
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
-        rsync --delete -a "${BUILDDIR}/" "${CACHEDIR}/"
-
-        cd "${CACHEDIR}"
         copypkg
-
-        UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
