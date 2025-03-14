@@ -120,11 +120,7 @@ echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
 
 cd "${REPODIR}"
 rm -fv repo_new.*
-if [ ! -z "${GPG_KEY_ID-}" ]; then
-    find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
-else
-    repo-add foxdenaur.db.tar.xz *.pkg.tar*
-fi
+"${WORKDIR}/repo-add-all.sh" foxdenaur.db.tar.xz "${GPG_KEY_ID}"
 cd "${WORKDIR}"
 
 rsync --delete -av repo_new/ repo/

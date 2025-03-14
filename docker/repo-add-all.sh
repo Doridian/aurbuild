@@ -2,8 +2,6 @@
 set -euo pipefail
 
 REPO="$1"
-if [ ! -z "${2-}" ]; then
-    cd "$2"
-fi
+GPG_ID="${2-}"
 
-find . -maxdepth 1 -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 "${WORKDIR}/repo-add.sh" "$REPO"
+find . -maxdepth 1 -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 "${WORKDIR}/repo-add.sh" "$REPO" "$GPG_ID"
