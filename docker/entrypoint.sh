@@ -44,9 +44,9 @@ subuild() {
 while :;
 do
     echo '[MIRROR BEGIN]'
-    subuild ./init.sh
+    subuild /aur/init.sh
     pacman_up || (pacman_clear && pacman_up)
-    subuild ./mirror.sh || true
+    subuild /aur/mirror.sh || true
     echo '[MIRROR END]'
     sleep 1h
 done

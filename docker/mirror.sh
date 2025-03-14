@@ -1,18 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-export WORKDIR="$(realpath "$(pwd)")"
+/aur/premirror.sh
 
-./premirror.sh
-
-REPODIR="$(realpath ./repo)"
+REPODIR="$(realpath /aur/repo)"
 HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
 
 if [ -f /gpg/pin ]; then
     gpg --use-agent --card-status
-    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null ./packages.txt
+    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
 fi
 
 signpkg() {
@@ -29,10 +27,10 @@ copypkg() {
 
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
-    "${WORKDIR}/repo-add-all.sh"
+    /aur/repo-add-all.sh
 }
 
-for pkg in `cat ./packages.txt`; do
+for pkg in `cat /aur/packages.txt`; do
     if [ -z "$pkg" ]; then
         continue
     fi
@@ -49,8 +47,7 @@ for pkg in `cat ./packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
-    cd "${WORKDIR}"
-
+    cd /aur
     if [ ! -d "cache/$pkg" ]; then
         echo "Cloning $pkg"
         git clone -- "$gitrepo" "cache/$pkg"
@@ -111,12 +108,8 @@ if [ ! -z "${HAD_FATAL_ERRORS}" ]; then
     exit 1
 fi
 
-if [ -z "${UPDATED_PACKAGES}" -a -f "${WORKDIR}/repo/foxdenaur.db" ]; then
-    echo '[AURBUILD] No packages updated. Skipping repo generation'
-    exit 0
+if [ -z "${UPDATED_PACKAGES}" ]; then
+    echo '[AURBUILD] No packages updated'
+else
+    echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
 fi
-
-echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
-
-cd "${REPODIR}"
-"${WORKDIR}/repo-add-all.sh"

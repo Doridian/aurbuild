@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+cd /aur/repo
 REPO='foxdenaur.db.tar.xz'
 
 ARGS=("$@")
