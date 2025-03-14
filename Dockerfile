@@ -34,6 +34,8 @@ WORKDIR /aur/keys/pgp
 RUN find -type f -exec gpg --import {} \;
 WORKDIR /aur
 
+RUN ./init.sh
+
 VOLUME /aur/cache
 VOLUME /aur/repo
 
