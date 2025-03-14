@@ -27,7 +27,7 @@ copypkg() {
 
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
-    /aur/repo-add-all.sh
+    find . -maxdepth 1 -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 /aur/repo-add.sh
 }
 
 for pkg in `cat /aur/packages.txt`; do
@@ -64,19 +64,10 @@ for pkg in `cat /aur/packages.txt`; do
 
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
-        cd "${CACHEDIR}"
-        if copypkg; then
-            continue
-        fi
-        echo "$pkg failed to install pre-built. Rebuilding."
+        continue
     fi
 
-    BUILDDIR="/tmp/aurbuild-$pkg"
-    rm -rf "${BUILDDIR}"
-    mkdir -p "${BUILDDIR}"
-    rsync --delete -a "${CACHEDIR}/" "${BUILDDIR}/"
-
-    cd "${BUILDDIR}"
+    cd "${CACHEDIR}"
     rm -fv .done
     rm -fv *.pkg.tar*
     git clean -fdx
@@ -84,18 +75,11 @@ for pkg in `cat /aur/packages.txt`; do
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
         echo "${NEWREV}" > .done
-        rsync --delete -a "${BUILDDIR}/" "${CACHEDIR}/"
-
-        cd "${CACHEDIR}"
         copypkg
-
         UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
         echo "Failed to build $pkg"
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
-
-        cd "${CACHEDIR}"
-        copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
 done
 

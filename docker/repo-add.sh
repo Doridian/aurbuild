@@ -10,7 +10,7 @@ for i in "${!ARGS[@]}"; do
 done
 
 if [ ! -z "${GPG_KEY_ID-}" ]; then
-    repo-add -n -R -p -k "${GPG_KEY_ID}" -s -v "$REPO" "$@"
+    repo-add -R -k "${GPG_KEY_ID}" -s -v "$REPO" "$@"
 else
-    repo-add -n -R -p "$REPO" "$@"
+    repo-add -R "$REPO" "$@"
 fi
