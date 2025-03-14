@@ -3,7 +3,7 @@ set -euo pipefail
 
 export WORKDIR="$(realpath "$(pwd)")"
 
-rm -rf repo_new
+rm -rf repo_new/*
 mkdir -p cache repo repo_new
 
 cd repo_new
