@@ -3,8 +3,7 @@ set -euo pipefail
 
 export WORKDIR="$(realpath "$(pwd)")"
 
-rm -rf repo_new/*
-mkdir -p cache repo repo_new
+mkdir -p cache repo
 
-cd repo_new
-"${WORKDIR}/repo-add.sh" repo_new.db.tar ''
+cd repo
+"${WORKDIR}/repo-add.sh"

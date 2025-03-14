@@ -1,13 +1,5 @@
 FROM archlinux:base-devel
 
-WORKDIR /aur
-COPY docker/init.sh /aur/init.sh
-COPY docker/repo-add.sh /aur/repo-add.sh
-RUN /aur/init.sh
-WORKDIR /
-
-COPY docker/pacman.conf /etc/pacman.conf
-
 RUN pacman -Syu --noconfirm --needed \
             cmake \
             make \
@@ -19,6 +11,8 @@ RUN pacman -Syu --noconfirm --needed \
             rsync \
             coreutils \
             mkinitcpio
+
+COPY docker/pacman.conf /etc/pacman.conf
 
 RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen-dori.preset
 RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen.preset

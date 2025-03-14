@@ -5,7 +5,7 @@ export WORKDIR="$(realpath "$(pwd)")"
 
 ./premirror.sh
 
-REPODIR="$(realpath ./repo_new)"
+REPODIR="$(realpath ./repo)"
 HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
@@ -29,7 +29,7 @@ copypkg() {
 
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
-    "${WORKDIR}/repo-add-all.sh" "${REPODIR}/repo_new.db.tar"
+    "${WORKDIR}/repo-add-all.sh"
 }
 
 for pkg in `cat ./packages.txt`; do
@@ -119,8 +119,4 @@ fi
 echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
 
 cd "${REPODIR}"
-rm -fv repo_new.*
-"${WORKDIR}/repo-add-all.sh" foxdenaur.db.tar.xz "${GPG_KEY_ID}"
-cd "${WORKDIR}"
-
-rsync --delete -av repo_new/ repo/
+"${WORKDIR}/repo-add-all.sh"
