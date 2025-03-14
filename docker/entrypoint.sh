@@ -37,7 +37,9 @@ pacman_clear() {
     yes | pacman -Scc
 }
 
-alias subuild='sudo --preserve-env=GPG_KEY_ID -H -u aur'
+subuild() {
+    sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
+}
 
 while :;
 do
