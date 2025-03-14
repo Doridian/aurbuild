@@ -3,7 +3,6 @@ set -euo pipefail
 
 export WORKDIR="$(realpath "$(pwd)")"
 
-./init.sh
 ./premirror.sh
 
 REPODIR="$(realpath ./repo_new)"

@@ -37,11 +37,14 @@ pacman_clear() {
     yes | pacman -Scc
 }
 
+alias subuild='sudo --preserve-env=GPG_KEY_ID -H -u aur'
+
 while :;
 do
     echo '[MIRROR BEGIN]'
+    subuild ./init.sh
     pacman_up || (pacman_clear && pacman_up)
-    sudo --preserve-env=GPG_KEY_ID -H -u aur ./mirror.sh || true
+    subuild ./mirror.sh || true
     echo '[MIRROR END]'
     sleep 1h
 done
