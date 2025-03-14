@@ -30,7 +30,7 @@ copypkg() {
 
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
-    "${WORKDIR}/repo-add-all.sh" "${REPODIR}repo_new.db.tar.xz"
+    "${WORKDIR}/repo-add-all.sh" "${REPODIR}/repo_new.db.tar.xz"
 }
 
 for pkg in `cat ./packages.txt`; do
