@@ -1,7 +1,12 @@
 FROM archlinux:base-devel
 
-COPY docker/pacman.conf /etc/pacman.conf
+WORKDIR /aur
+COPY docker/init.sh /aur/init.sh
+COPY docker/repo-add.sh /aur/repo-add.sh
+RUN /aur/init.sh
+WORKDIR /
 
+COPY docker/pacman.conf /etc/pacman.conf
 
 RUN pacman -Syu --noconfirm --needed \
             cmake \

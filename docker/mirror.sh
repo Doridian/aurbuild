@@ -1,11 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
-WORKDIR="$(realpath "$(pwd)")"
+export WORKDIR="$(realpath "$(pwd)")"
 
-rm -rf repo_new/*
-mkdir -p cache repo repo_new
-
+./init.sh
 ./premirror.sh
 
 REPODIR="$(realpath ./repo_new)"
@@ -29,26 +27,19 @@ copypkg() {
     ls *.pkg.tar* 2>/dev/null >/dev/null || false
     # Try to re-sign if no signature
     ls *.sig 2>/dev/null >/dev/null || signpkg
-    if [ ! -z "${1-}" ]; then
-        # Try local install
-        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 sudo pacman -U --noconfirm --needed
-    fi
+
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
+    "${WORKDIR}/repo-add-all.sh" "${REPODIR}repo_new.db.tar.xz"
 }
 
 for pkg in `cat ./packages.txt`; do
     if [ -z "$pkg" ]; then
         continue
     fi
+    pkg="$(echo "$pkg" | tr -d '\r\n\t ')"
     if [ "${pkg:0:1}" = "#" ]; then
         continue
-    fi
-
-    do_install=''
-    if [ "${pkg:0:1}" = "!" ]; then
-        do_install=true
-        pkg="${pkg:1}"
     fi
 
     if [[ "$pkg" == *":"* ]]; then
@@ -78,7 +69,7 @@ for pkg in `cat ./packages.txt`; do
     if [ "$OLDREV" = "$NEWREV" ]; then
         echo "$pkg is up to date"
         cd "${CACHEDIR}"
-        if copypkg "${do_install}"; then
+        if copypkg; then
             continue
         fi
         echo "$pkg failed to install pre-built. Rebuilding."
@@ -100,7 +91,7 @@ for pkg in `cat ./packages.txt`; do
         rsync --delete -a "${BUILDDIR}/" "${CACHEDIR}/"
 
         cd "${CACHEDIR}"
-        copypkg "${do_install}"
+        copypkg
 
         UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
@@ -108,7 +99,7 @@ for pkg in `cat ./packages.txt`; do
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
 
         cd "${CACHEDIR}"
-        copypkg "${do_install}" || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
+        copypkg || HAD_FATAL_ERRORS="${HAD_FATAL_ERRORS} ${pkg}"
     fi
 done
 
@@ -128,7 +119,7 @@ fi
 
 echo "[AURBUILD] Updated packages: ${UPDATED_PACKAGES}"
 
-cd "${WORKDIR}/repo_new"
+cd "${REPODIR}"
 rm -fv repo_new.*
 if [ ! -z "${GPG_KEY_ID-}" ]; then
     find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 repo-add -k "${GPG_KEY_ID}" -s -v foxdenaur.db.tar.xz
