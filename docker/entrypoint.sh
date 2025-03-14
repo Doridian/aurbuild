@@ -5,6 +5,7 @@ usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
 mkdir -p /home/aur/.gnupg
 chown -R aur:aur /home/aur /aur/repo /aur/cache
+chown -R aur:aur /aur/repo_new || true
 chown aur:aur /aur
 chmod 700 /home/aur /home/aur/.gnupg
 
