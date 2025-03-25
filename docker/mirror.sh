@@ -70,7 +70,7 @@ for pkg in `cat /aur/packages.txt`; do
     cd "${CACHEDIR}"
     rm -fv .done
     rm -fv *.pkg.tar*
-    git clean -fdx
+    rm -rfv pkg src
     git reset --hard "${GIT_BRANCH}"
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
