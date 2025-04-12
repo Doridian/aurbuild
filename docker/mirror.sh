@@ -69,13 +69,6 @@ for pkg in `cat /aur/packages.txt`; do
         continue
     fi
 
-    echo "Building $pkg"
-    echo "Old gitrev: $OLD_GITREV"
-    echo "New gitrev: $NEW_GITREV"
-    echo "Old pkgver: $OLD_PKGVER"
-    echo "New pkgver: $NEW_PKGVER"
-    continue
-
     cd "cache/$pkg"
     rm -fv .done.gitrev .done.pkgver
     rm -fv *.pkg.tar*
