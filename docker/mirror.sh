@@ -62,7 +62,7 @@ for pkg in `cat /aur/packages.txt`; do
     NEW_GITREV="$(git -C "cache/$pkg" rev-parse "${GIT_BRANCH}")"
 
     OLD_PKGVER="$(cat "cache/$pkg/.done.pkgver" 2>/dev/null || true)"
-    NEW_PKGVER="$(/aur/getver.sh "cache/$pkg" update 2>/dev/null || true)"
+    NEW_PKGVER="$(/aur/getver.sh "cache/$pkg" update)"
 
     if [ "$OLD_GITREV" = "$NEW_GITREV" ] && [ "$OLD_PKGVER" = "$NEW_PKGVER" ]; then
         echo "$pkg is up to date"
