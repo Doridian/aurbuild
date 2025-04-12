@@ -28,6 +28,8 @@ copypkg() {
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
     find . -maxdepth 1 -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 /aur/repo-add.sh
+
+    pacman -Sy --noconfirm || true
 }
 
 for pkg in `cat /aur/packages.txt`; do
