@@ -3,7 +3,7 @@ set -euo pipefail
 
 cd "$1"
 
-if [ "${2-}" = 'update' ]; then
+if [ "${2-}" = 'update' ] && grep -q '^ *pkgver *()' PKGBUILD; then
     makepkg --check --nobuild >&2
 fi
 
