@@ -58,23 +58,26 @@ for pkg in `cat /aur/packages.txt`; do
     fi
     GIT_BRANCH="origin/$(git -C "cache/$pkg" branch --show-current)"
 
-    OLDREV="$(cat "cache/$pkg/.done" 2>/dev/null || true)"
-    NEWREV="$(git -C "cache/$pkg" rev-parse "${GIT_BRANCH}")"
-    CACHEDIR="$(realpath "cache/$pkg")"
+    OLD_GITREV="$(cat "cache/$pkg/.done.gitrev" 2>/dev/null || true)"
+    NEW_GITREV="$(git -C "cache/$pkg" rev-parse "${GIT_BRANCH}")"
 
-    if [ "$OLDREV" = "$NEWREV" ]; then
+    OLD_PKGVER="$(cat "cache/$pkg/.done.pkgver" 2>/dev/null || true)"
+    NEW_PKGVER="$(/aur/getver.sh "cache/$pkg" update 2>/dev/null || true)"
+
+    if [ "$OLD_GITREV" = "$NEW_GITREV" ] && [ "$OLD_PKGVER" = "$NEW_PKGVER" ]; then
         echo "$pkg is up to date"
         continue
     fi
 
-    cd "${CACHEDIR}"
-    rm -fv .done
+    cd "cache/$pkg"
+    rm -fv .done.gitrev .done.pkgver
     rm -fv *.pkg.tar*
     rm -rfv pkg src
     git reset --hard "${GIT_BRANCH}"
     if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
         signpkg
-        echo "${NEWREV}" > .done
+        echo "${NEW_GITREV}" > .done.gitrev
+        /aur/getver.sh . > .done.pkgver
         copypkg
         UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
     else
