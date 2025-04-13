@@ -48,5 +48,5 @@ do
     pacman_up || (pacman_clear && pacman_up)
     subuild /aur/mirror.sh || true
     echo '[MIRROR END]'
-    sleep 1h
+    sleep "${SLEEP_BETWEEN_RUNS-1h}"
 done
