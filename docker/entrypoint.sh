@@ -1,6 +1,9 @@
 #!/bin/bash
 set -euo pipefail
 
+ln -sf /dev/stderr /dev/log
+ln -sf /dev/stderr /dev/console
+
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
 mkdir -p /home/aur/.gnupg /aur/repo /aur/cache
