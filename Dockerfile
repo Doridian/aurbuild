@@ -11,7 +11,8 @@ RUN pacman -Syu --noconfirm --needed \
             rsync \
             coreutils \
             mkinitcpio \
-            cronie
+            cronie \
+            socat
 
 COPY docker/pacman.conf /etc/pacman.conf
 COPY docker/crontab /etc/cron.d/aurbuild

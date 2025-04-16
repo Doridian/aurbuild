@@ -2,8 +2,9 @@
 set -euo pipefail
 set -x
 
-ln -sf /dev/stderr /dev/log
-ln -sf /dev/stderr /dev/console
+socat UNIX-LISTEN:/dev/log STDERR &
+_socat_pid=$$
+trap "kill -9 $_socat_pid" EXIT
 
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
@@ -22,4 +23,4 @@ if [ ! -z "${GPG_KEY_PATH-}" ]; then
     sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import "${GPG_KEY_PATH}"
 fi
 
-exec /usr/bin/crond -f -s -i
+/usr/bin/crond -f -s -i
