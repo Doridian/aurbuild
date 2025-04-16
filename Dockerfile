@@ -10,14 +10,11 @@ RUN pacman -Syu --noconfirm --needed \
             sudo \
             rsync \
             coreutils \
-            mkinitcpio
+            mkinitcpio \
+            cronie
 
 COPY docker/pacman.conf /etc/pacman.conf
-
-RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen-dori.preset
-RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-zen.preset
-RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux-lts.preset
-RUN echo '# DISABLED' > /etc/mkinitcpio.d/linux.preset
+COPY docker/crontab /etc/cron.d/aurbuild
 
 ENV PUID=1000
 ENV PGID=1000
