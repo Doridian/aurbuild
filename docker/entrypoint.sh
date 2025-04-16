@@ -3,7 +3,7 @@ set -euo pipefail
 set -x
 
 socat UNIX-LISTEN:/dev/log STDERR &
-_socat_pid=$$
+_socat_pid=$!
 trap "kill -9 $_socat_pid" EXIT
 
 usermod -u "${PUID}" aur
