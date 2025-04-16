@@ -18,7 +18,7 @@ if [ ! -z "${GPG_KEY_DATA-}" ]; then
         echo 'GPG_KEY_ID is not set, but GPG_KEY_DATA is set. Please set GPG_KEY_ID to the key ID of the key.'
         exit 1
     fi
-    sudo  -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import - <<<"${GPG_KEY_DATA}"
+    sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import - <<<"${GPG_KEY_DATA}"
 fi
 
 if [ ! -z "${GPG_KEY_PATH-}" ]; then
