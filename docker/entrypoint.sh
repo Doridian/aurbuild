@@ -32,6 +32,8 @@ subuild() {
     sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
 }
 
+BUILD_TIMESPEC="${BUILD_TIMESPEC-14:14}"
+
 while :; do
     echo '[MIRROR BEGIN]'
     subuild /aur/init.sh
@@ -40,7 +42,10 @@ while :; do
     echo '[MIRROR END]'
 
     current_epoch="$(date '+%s')"
-    target_epoch="$(date -d "${BUILD_TIMESPEC-tomorrow 14:14}" '+%s')"
+    target_epoch="$(date -d "today ${BUILD_TIMESPEC}" '+%s')"
+    if [ "$target_epoch" -lt "$current_epoch" ]; then
+        target_epoch="$(date -d "tomorrow ${BUILD_TIMESPEC}" '+%s')"
+    fi
     sleep_seconds="$(( "$target_epoch" - "$current_epoch" ))"
     sleep "$sleep_seconds"
 done
