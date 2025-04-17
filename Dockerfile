@@ -12,7 +12,9 @@ RUN pacman -Syu --noconfirm --needed \
             coreutils \
             mkinitcpio \
             cronie \
-            socat
+            socat \
+            pcsclite \
+            ccid
 
 COPY docker/pacman.conf /etc/pacman.conf
 COPY docker/crontab /etc/cron.d/aurbuild
