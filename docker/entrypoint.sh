@@ -15,19 +15,10 @@ chmod 700 /home/aur /home/aur/.gnupg
 
 rm -fv /var/lib/pacman/db.lck
 
-_has_gpg=0
-
-if [ -f /gpg/pin ]; then
-    _has_gpg=1
-    sudo -H -u aur gpg --use-agent --card-status
-elif [ -f /gpg/key ]; then
-    _has_gpg=1
-    sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import "${GPG_KEY_PATH}"
+ if [ -f /gpg/key ]; then
+    sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
 fi
 
-if [ -z "${GPG_KEY_ID-}" ]; then
-    echo 'GPG_KEY_ID is not set, but /gpg/key or /gpg/pin exist.'
-    exit 1
-fi
+sudo -H -u aur /aur/gpgtest.sh
 
 /usr/bin/crond -f -s -i

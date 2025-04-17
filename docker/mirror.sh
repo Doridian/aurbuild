@@ -8,10 +8,7 @@ HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
 
-if [ -f /gpg/pin ]; then
-    gpg --use-agent --card-status
-    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
-fi
+/aur/gpgtest.sh
 
 signpkg() {
     if [ ! -z "${GPG_KEY_ID-}" ]; then
