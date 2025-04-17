@@ -10,14 +10,10 @@ RUN pacman -Syu --noconfirm --needed \
             sudo \
             rsync \
             coreutils \
-            mkinitcpio \
-            cronie \
-            socat \
             pcsclite \
             ccid
 
 COPY docker/pacman.conf /etc/pacman.conf
-COPY docker/crontab /etc/cron.d/aurbuild
 
 ENV PUID=1000
 ENV PGID=1000
