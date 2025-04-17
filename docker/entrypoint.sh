@@ -41,7 +41,7 @@ while :; do
         target_epoch="$(date -d "tomorrow ${BUILD_TIMESPEC}" '+%s')"
     fi
     sleep_seconds="$(( "$target_epoch" - "$current_epoch" ))"
-    sleep "$sleep_seconds"
+    sleep "$sleep_seconds" || true
 
     echo '[MIRROR BEGIN]'
     subuilder /aur/init.sh
