@@ -35,12 +35,6 @@ subuild() {
 BUILD_TIMESPEC="${BUILD_TIMESPEC-14:14}"
 
 while :; do
-    echo '[MIRROR BEGIN]'
-    subuild /aur/init.sh
-    pacman_up || (pacman_clear && pacman_up)
-    subuild /aur/mirror.sh || true
-    echo '[MIRROR END]'
-
     current_epoch="$(date '+%s')"
     target_epoch="$(date -d "today ${BUILD_TIMESPEC}" '+%s')"
     if [ "$target_epoch" -lt "$current_epoch" ]; then
@@ -48,4 +42,10 @@ while :; do
     fi
     sleep_seconds="$(( "$target_epoch" - "$current_epoch" ))"
     sleep "$sleep_seconds"
+
+    echo '[MIRROR BEGIN]'
+    subuild /aur/init.sh
+    pacman_up || (pacman_clear && pacman_up)
+    subuild /aur/mirror.sh || true
+    echo '[MIRROR END]'
 done
