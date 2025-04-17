@@ -11,12 +11,6 @@ chmod 700 /home/aur /home/aur/.gnupg
 
 rm -fv /var/lib/pacman/db.lck
 
-if [ -f /gpg/key ]; then
-    sudo -H -u aur gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
-fi
-
-sudo -H -u aur /aur/gpgtest.sh
-
 pacman_up() {
     # This gets rid of all local packages, such that we only have repo packages
     pacman -Qm | cut -d' ' -f1 | xargs sudo pacman -R --noconfirm
@@ -28,9 +22,15 @@ pacman_clear() {
     yes | pacman -Scc
 }
 
-subuild() {
+subuilder() {
     sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
 }
+
+if [ -f /gpg/key ]; then
+    subuilder gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
+fi
+
+subuilder /aur/gpgtest.sh
 
 BUILD_TIMESPEC="${BUILD_TIMESPEC-14:14}"
 
@@ -44,8 +44,8 @@ while :; do
     sleep "$sleep_seconds"
 
     echo '[MIRROR BEGIN]'
-    subuild /aur/init.sh
+    subuilder /aur/init.sh
     pacman_up || (pacman_clear && pacman_up)
-    subuild /aur/mirror.sh || true
+    subuilder /aur/mirror.sh || true
     echo '[MIRROR END]'
 done
