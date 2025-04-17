@@ -28,6 +28,8 @@ RUN useradd aur && \
     chown aur:aur /home/aur /aur /home/aur/.gnupg && \
     chmod 700 /home/aur/.gnupg /home/aur
 
+COPY --chown=aur:aur docker/scdaemon.conf /home/aur/.gnupg/scdaemon.conf
+
 COPY docker/ /aur
 ENV HOME=/home/aur
 WORKDIR /aur/keys/pgp
