@@ -41,8 +41,8 @@ for pkg in `cat /aur/packages.txt`; do
     pkgsubdir=''
     if [[ "$pkg" == *"!"* ]]; then
         gitrepo="$(echo "$pkg" | cut -d'!' -f1)"
+        pkgsubdir="$(echo "$pkg" | cut -d'!' -f3)"
         pkg="$(echo "$pkg" | cut -d'!' -f2)"
-        pkgsubdir="$pkg"
     elif [[ "$pkg" == *":"* ]]; then
         gitrepo="$pkg"
         # Extract part after last slash, but before .git
