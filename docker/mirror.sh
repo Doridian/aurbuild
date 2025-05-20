@@ -38,9 +38,11 @@ for pkg in `cat /aur/packages.txt`; do
         continue
     fi
 
+    pkgsubdir=''
     if [[ "$pkg" == *"!"* ]]; then
         gitrepo="$(echo "$pkg" | cut -d'!' -f1)"
         pkg="$(echo "$pkg" | cut -d'!' -f2)"
+        pkgsubdir="$pkg"
     elif [[ "$pkg" == *":"* ]]; then
         gitrepo="$pkg"
         # Extract part after last slash, but before .git
@@ -49,29 +51,31 @@ for pkg in `cat /aur/packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
+    pkgdir="cache/$pkgsubdir/$pkg"
+
     cd /aur
-    if [ ! -d "cache/$pkg" ]; then
+    if [ ! -d "$pkgdir" ]; then
         echo "Cloning $pkg"
-        git clone -- "$gitrepo" "cache/$pkg"
+        git clone -- "$gitrepo" "$pkgdir"
     else
         echo "Updating $pkg"
-        git -C "cache/$pkg" remote set-url origin "$gitrepo"
-        git -C "cache/$pkg" fetch
+        git -C "$pkgdir" remote set-url origin "$gitrepo"
+        git -C "$pkgdir" fetch
     fi
-    GIT_BRANCH="origin/$(git -C "cache/$pkg" branch --show-current)"
+    GIT_BRANCH="origin/$(git -C "$pkgdir" branch --show-current)"
 
-    OLD_GITREV="$(cat "cache/$pkg/.done.gitrev" 2>/dev/null || true)"
-    NEW_GITREV="$(git -C "cache/$pkg" rev-parse "${GIT_BRANCH}")"
+    OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
+    NEW_GITREV="$(git -C "$pkgdir" rev-parse "${GIT_BRANCH}")"
 
-    OLD_PKGVER="$(cat "cache/$pkg/.done.pkgver" 2>/dev/null || true)"
-    NEW_PKGVER="$(/aur/getver.sh "cache/$pkg" update)"
+    OLD_PKGVER="$(cat "$pkgdir/.done.pkgver" 2>/dev/null || true)"
+    NEW_PKGVER="$(/aur/getver.sh "$pkgdir" update)"
 
     if [ "$OLD_GITREV" = "$NEW_GITREV" ] && [ "$OLD_PKGVER" = "$NEW_PKGVER" ]; then
         echo "$pkg is up to date"
         continue
     fi
 
-    cd "cache/$pkg"
+    cd "$pkgdir"
     rm -fv .done.gitrev .done.pkgver
     rm -fv *.pkg.tar*
     rm -rfv pkg src
