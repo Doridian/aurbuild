@@ -51,21 +51,25 @@ for pkg in `cat /aur/packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
-    pkgdir="cache/$pkgsubdir/$pkg"
+    pkgroot="cache/$pkg"
+    pkgdir="$pkgroot"
+    if [ ! -z "$pkgsubdir" ]; then
+        pkgdir="$pkgroot/$pkgsubdir"
+    fi
 
     cd /aur
-    if [ ! -d "$pkgdir" ]; then
+    if [ ! -d "$pkgroot" ]; then
         echo "Cloning $pkg"
-        git clone -- "$gitrepo" "$pkgdir"
+        git clone -- "$gitrepo" "$pkgroot"
     else
         echo "Updating $pkg"
-        git -C "$pkgdir" remote set-url origin "$gitrepo"
-        git -C "$pkgdir" fetch
+        git -C "$pkgroot" remote set-url origin "$gitrepo"
+        git -C "$pkgroot" fetch
     fi
-    GIT_BRANCH="origin/$(git -C "$pkgdir" branch --show-current)"
+    GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
 
     OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
-    NEW_GITREV="$(git -C "$pkgdir" rev-parse "${GIT_BRANCH}")"
+    NEW_GITREV="$(git -C "$pkgroot" rev-parse "${GIT_BRANCH}")"
 
     OLD_PKGVER="$(cat "$pkgdir/.done.pkgver" 2>/dev/null || true)"
     NEW_PKGVER="$(/aur/getver.sh "$pkgdir" update)"
