@@ -51,13 +51,14 @@ for pkg in `cat /aur/packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
-    pkgroot="cache/$pkg"
+    pkgroot="/aur/cache/$pkg"
     pkgdir="$pkgroot"
     if [ ! -z "$pkgsubdir" ]; then
         pkgdir="$pkgroot/$pkgsubdir"
     fi
 
-    cd /aur
+    echo "[DIAG] pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo pkg=$pkg"
+
     if [ ! -d "$pkgroot" ]; then
         echo "Cloning $pkg"
         git clone -- "$gitrepo" "$pkgroot"
@@ -79,21 +80,27 @@ for pkg in `cat /aur/packages.txt`; do
         continue
     fi
 
-    cd "$pkgdir"
-    rm -fv .done.gitrev .done.pkgver
-    rm -fv *.pkg.tar*
-    rm -rfv pkg src
-    git reset --hard "${GIT_BRANCH}"
-    if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
-        signpkg
-        echo "${NEW_GITREV}" > .done.gitrev
-        /aur/getver.sh . > .done.pkgver
-        copypkg
-        UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
-    else
-        echo "Failed to build $pkg"
-        HAD_ERRORS="${HAD_ERRORS} ${pkg}"
-    fi
+    for trynum in `seq 1 2`; do
+        cd "$pkgdir"
+        rm -fv .done.gitrev .done.pkgver
+        rm -fv *.pkg.tar*
+        rm -rfv pkg src
+        git reset --hard "${GIT_BRANCH}"
+        if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
+            signpkg
+            echo "${NEW_GITREV}" > .done.gitrev
+            /aur/getver.sh . > .done.pkgver
+            copypkg
+            UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
+            break
+        elif [ $trynum -le 1 ]; then
+            echo "Failed to build $pkg, retrying after git clean"
+            git clean -fdx
+        else
+            echo "Failed to build $pkg after retrying, giving up"
+            HAD_ERRORS="${HAD_ERRORS} ${pkg}"
+        fi
+    done
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
