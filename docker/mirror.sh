@@ -57,6 +57,8 @@ for pkg in `cat /aur/packages.txt`; do
         pkgdir="$pkgroot/$pkgsubdir"
     fi
 
+    echo "[DIAG] pkg=$pkg pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo"
+
     if [ ! -d "$pkgroot" ]; then
         echo "Cloning $pkg"
         git clone -- "$gitrepo" "$pkgroot"
