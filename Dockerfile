@@ -13,6 +13,8 @@ RUN pacman -Syu --noconfirm --needed \
             pcsclite \
             ccid
 
+ENV FOXDENAUR_KEY_ID=723AB072D36DF76677DA5ACF41ADC5FF876838A8
+
 COPY docker/pacman.conf /etc/pacman.conf
 
 ENV PUID=1000
@@ -32,6 +34,9 @@ WORKDIR /aur/keys/pgp
 RUN find -type f -exec gpg --import {} \;
 WORKDIR /aur
 
+RUN pacman-key --init && \
+    gpg --export --armor "${FOXDENAUR_KEY_ID}" | pacman-key --add - && \
+    pacman-key --lsign-key "${FOXDENAUR_KEY_ID}"
 RUN /aur/init.sh
 
 VOLUME /aur/cache
