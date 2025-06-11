@@ -52,9 +52,12 @@ for pkg in `cat /aur/packages.txt`; do
     fi
 
     pkgroot="/aur/cache/$pkg"
+    date > "$pkgroot/.lastcheck"
+
     pkgdir="$pkgroot"
     if [ ! -z "$pkgsubdir" ]; then
         pkgdir="$pkgroot/$pkgsubdir"
+        date > "$pkgdir/.lastcheck"
     fi
 
     echo "[DIAG] pkg=$pkg pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo"
