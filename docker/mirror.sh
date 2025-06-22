@@ -52,12 +52,9 @@ for pkg in `cat /aur/packages.txt`; do
     fi
 
     pkgroot="/aur/cache/$pkg"
-    date > "$pkgroot/.lastcheck"
-
     pkgdir="$pkgroot"
     if [ ! -z "$pkgsubdir" ]; then
         pkgdir="$pkgroot/$pkgsubdir"
-        date > "$pkgdir/.lastcheck"
     fi
 
     echo "[DIAG] pkg=$pkg pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo"
@@ -70,6 +67,12 @@ for pkg in `cat /aur/packages.txt`; do
         git -C "$pkgroot" remote set-url origin "$gitrepo"
         git -C "$pkgroot" fetch
     fi
+
+    date > "$pkgroot/.lastcheck"
+    if [ ! -z "$pkgsubdir" ]; then
+        date > "$pkgdir/.lastcheck"
+    fi
+
     GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
 
     OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
