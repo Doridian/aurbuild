@@ -88,7 +88,7 @@ for pkg in `cat /aur/packages.txt`; do
         cd "$pkgdir"
         rm -fv .done.gitrev .done.pkgver
         rm -fv *.pkg.tar*
-        rm -rfv pkg src
+        rm -rf pkg src
         git reset --hard "${GIT_BRANCH}"
         if makepkg --syncdeps --noconfirm --needed --force --cleanbuild; then
             signpkg
@@ -107,7 +107,7 @@ for pkg in `cat /aur/packages.txt`; do
     done
 
     cd "$pkgdir"
-    rm -rfv pkg src
+    rm -rf pkg src
 
     date > "$pkgroot/.lastcheck"
     if [ ! -z "$pkgsubdir" ]; then
