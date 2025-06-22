@@ -90,7 +90,7 @@ for pkg in `cat /aur/packages.txt`; do
         rm -fv *.pkg.tar*
         rm -rfv pkg src
         git reset --hard "${GIT_BRANCH}"
-        if makepkg --syncdeps --noconfirm --needed --force --clean --cleanbuild; then
+        if makepkg --syncdeps --noconfirm --needed --force --cleanbuild; then
             signpkg
             echo "${NEW_GITREV}" > .done.gitrev
             /aur/getver.sh . > .done.pkgver
@@ -105,6 +105,9 @@ for pkg in `cat /aur/packages.txt`; do
             HAD_ERRORS="${HAD_ERRORS} ${pkg}"
         fi
     done
+
+    cd "$pkgdir"
+    rm -rfv pkg src
 
     date > "$pkgroot/.lastcheck"
     if [ ! -z "$pkgsubdir" ]; then
