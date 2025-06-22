@@ -68,11 +68,6 @@ for pkg in `cat /aur/packages.txt`; do
         git -C "$pkgroot" fetch
     fi
 
-    date > "$pkgroot/.lastcheck"
-    if [ ! -z "$pkgsubdir" ]; then
-        date > "$pkgdir/.lastcheck"
-    fi
-
     GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
 
     OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
@@ -81,12 +76,15 @@ for pkg in `cat /aur/packages.txt`; do
     OLD_PKGVER="$(cat "$pkgdir/.done.pkgver" 2>/dev/null || true)"
     NEW_PKGVER="$(/aur/getver.sh "$pkgdir" update)"
 
-    if [ "$OLD_GITREV" = "$NEW_GITREV" ] && [ "$OLD_PKGVER" = "$NEW_PKGVER" ]; then
-        echo "$pkg is up to date"
-        continue
-    fi
-
     for trynum in `seq 1 2`; do
+        # This seems a little hacky to put in the loop...
+        # But this way, the .lastcheck update below only has to be
+        # written once, and we don't duplicate code
+        if [ "$OLD_GITREV" = "$NEW_GITREV" ] && [ "$OLD_PKGVER" = "$NEW_PKGVER" ]; then
+            echo "$pkg is up to date"
+            break
+        fi
+
         cd "$pkgdir"
         rm -fv .done.gitrev .done.pkgver
         rm -fv *.pkg.tar*
@@ -107,6 +105,11 @@ for pkg in `cat /aur/packages.txt`; do
             HAD_ERRORS="${HAD_ERRORS} ${pkg}"
         fi
     done
+
+    date > "$pkgroot/.lastcheck"
+    if [ ! -z "$pkgsubdir" ]; then
+        date > "$pkgdir/.lastcheck"
+    fi
 done
 
 if [ ! -z "${HAD_ERRORS}" ]; then
