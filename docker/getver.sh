@@ -8,5 +8,7 @@ if [ "${2-}" = 'update' ] && grep -q '^ *pkgver *()' PKGBUILD; then
 fi
 
 CARCH="$(uname -m)"
+set +u
 source PKGBUILD
+set -u
 echo $pkgver
