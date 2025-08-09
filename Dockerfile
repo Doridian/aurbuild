@@ -11,7 +11,8 @@ RUN pacman -Syu --noconfirm --needed \
             rsync \
             coreutils \
             pcsclite \
-            ccid
+            ccid \
+            gocryptfs
 
 ENV FOXDENAUR_KEY_ID=723AB072D36DF76677DA5ACF41ADC5FF876838A8
 
