@@ -6,9 +6,11 @@ set -euo pipefail
 REPODIR="$(realpath /aur/repo)"
 TEMPDIR="$(realpath /aur/tmp)"
 CACHEDIR="$(realpath /aur/cache)"
-export MAKEPKG_TEMPDIR="${TEMPDIR}/makepkg"
 SIZEDIR="${CACHEDIR}/.lastsizes"
 mkdir -p "${SIZEDIR}"
+
+export MAKEPKG_TEMPDIR="${TEMPDIR}/makepkg"
+
 HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
