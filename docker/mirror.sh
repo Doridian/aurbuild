@@ -4,6 +4,8 @@ set -euo pipefail
 /aur/premirror.sh
 
 REPODIR="$(realpath /aur/repo)"
+TEMPDIR="$(realpath /aur/tmp)"
+export MAKEPKG_TEMPDIR="${TEMPDIR}/makepkg"
 HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
@@ -88,7 +90,8 @@ for pkg in `cat /aur/packages.txt`; do
         cd "$pkgdir"
         rm -fv .done.gitrev .done.pkgver
         rm -fv *.pkg.tar*
-        rm -rf pkg src
+        rm -rf pkg src "${MAKEPKG_TEMPDIR}"
+        mkdir -p "${MAKEPKG_TEMPDIR}"
         git reset --hard "${GIT_BRANCH}"
         if makepkg --syncdeps --noconfirm --needed --force --cleanbuild; then
             signpkg
@@ -107,7 +110,7 @@ for pkg in `cat /aur/packages.txt`; do
     done
 
     cd "$pkgdir"
-    rm -rf pkg src
+    rm -rf pkg src "${MAKEPKG_TEMPDIR}"
 
     date > "$pkgroot/.lastcheck"
     if [ ! -z "$pkgsubdir" ]; then
