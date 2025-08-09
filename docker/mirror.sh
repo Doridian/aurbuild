@@ -5,7 +5,10 @@ set -euo pipefail
 
 REPODIR="$(realpath /aur/repo)"
 TEMPDIR="$(realpath /aur/tmp)"
+CACHEDIR="$(realpath /aur/cache)"
 export MAKEPKG_TEMPDIR="${TEMPDIR}/makepkg"
+SIZEDIR="${CACHEDIR}/.lastsizes"
+mkdir -p "${SIZEDIR}"
 HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
@@ -53,7 +56,7 @@ for pkg in `cat /aur/packages.txt`; do
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
-    pkgroot="/aur/cache/$pkg"
+    pkgroot="${CACHEDIR}/$pkg"
     pkgdir="$pkgroot"
     if [ ! -z "$pkgsubdir" ]; then
         pkgdir="$pkgroot/$pkgsubdir"
@@ -99,6 +102,7 @@ for pkg in `cat /aur/packages.txt`; do
             /aur/getver.sh . > .done.pkgver
             copypkg
             UPDATED_PACKAGES="${UPDATED_PACKAGES} ${pkg}"
+            du -sh pkg src > "${SIZEDIR}/${pkg}"
             break
         elif [ $trynum -le 1 ]; then
             echo "Failed to build $pkg, retrying after git clean"
