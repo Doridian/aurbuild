@@ -20,6 +20,7 @@ COPY docker/pacman.conf /etc/pacman.conf
 
 ENV PUID=1000
 ENV PGID=1000
+ENV UNSHARE_MOUNT_BUILDER=
 
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \

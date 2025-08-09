@@ -23,7 +23,11 @@ pacman_clear() {
 }
 
 subuilder() {
-    sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
+    if [ -z "${UNSHARE_MOUNT_BUILDER-}" ]; then
+        sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
+    else
+        unshare -c --keep-caps -m sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
+    fi
 }
 
 if [ -f /gpg/key ]; then
