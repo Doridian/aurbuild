@@ -22,9 +22,9 @@ ENV PGID=1000
 
 RUN useradd aur && \
     echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
-    mkdir -p /home/aur /aur /home/aur/.gnupg && \
-    chown aur:aur /home/aur /aur /home/aur/.gnupg && \
-    chmod 700 /home/aur/.gnupg /home/aur
+    mkdir -p /home/aur /aur /aur/tmp /home/aur/.gnupg && \
+    chown aur:aur /home/aur /aur /aur/tmp /home/aur/.gnupg && \
+    chmod 700 /home/aur/.gnupg /home/aur /aur/tmp
 
 COPY --chown=aur:aur docker/scdaemon.conf /home/aur/.gnupg/scdaemon.conf
 
