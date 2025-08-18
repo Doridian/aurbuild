@@ -14,7 +14,7 @@ RUN pacman -Syu --noconfirm --needed \
             ccid \
             gocryptfs
 
-ENV FOXDENAUR_KEY_ID=723AB072D36DF76677DA5ACF41ADC5FF876838A8
+ENV FOXDENAUR_KEY_ID=4AD2622868104810CF06D8A3DB107CBC60A512F7
 
 COPY docker/pacman.conf /etc/pacman.conf
 
