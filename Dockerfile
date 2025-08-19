@@ -11,6 +11,7 @@ RUN useradd aur && \
     chmod 700 /home/aur/.gnupg /home/aur /aur/tmp
 
 COPY --chown=aur:aur docker/scdaemon.conf /home/aur/.gnupg/scdaemon.conf
+COPY --chown=root:root docker/scdaemon.conf /root/.gnupg/scdaemon.conf
 
 COPY docker/ /aur
 ENV HOME=/home/aur
