@@ -17,17 +17,9 @@ UPDATED_PACKAGES=""
 
 /aur/gpgtest.sh
 
-signpkg() {
-    if [ ! -z "${GPG_KEY_ID-}" ]; then
-        find . -type f -iname '*.pkg.tar*' -not -iname '*.sig' -print0 | xargs -r -0 -n1 gpg --use-agent --no-tty --batch --yes --detach-sign -u "${GPG_KEY_ID}"
-    fi
-}
-
 copypkg() {
     # Fail if no artifacts
     ls *.pkg.tar* 2>/dev/null >/dev/null || false
-    # Try to re-sign if no signature
-    ls *.sig 2>/dev/null >/dev/null || signpkg
 
     # Finally, copy if all is good
     cp -av -- *.pkg.tar* "${REPODIR}"
@@ -99,7 +91,6 @@ for pkg in `cat /aur/packages.txt`; do
         mkdir -p "${MAKEPKG_TEMPDIR}"
         git reset --hard "${GIT_BRANCH}"
         if makepkg --syncdeps --noconfirm --needed --force --cleanbuild; then
-            signpkg
             echo "${NEW_GITREV}" > .done.gitrev
             /aur/getver.sh . > .done.pkgver
             copypkg
