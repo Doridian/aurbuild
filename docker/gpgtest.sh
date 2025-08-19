@@ -3,12 +3,17 @@ set -euo pipefail
 set -x
 
 if [ -f /gpg/pin ]; then
+    sed 's~#passphrase-file /gpg/pin~passphrase-file /gpg/pin~' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
+else
+    sed 's~passphrase-file /gpg/pin~#passphrase-file /gpg/pin~' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
+fi
+
+if [ -f /gpg/key ]; then
+    # Fixed key file
+elif [ -f /gpg/pin ]; then
     gpgconf --kill gpg-agent
     gpg --use-agent --card-status
     gpg --use-agent --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
-elif [ -f /gpg/key ]; then
-    # Fixed key file
-    true
 else
     echo 'WARNING: Package signing disabled!'
     exit 0
