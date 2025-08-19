@@ -2,24 +2,22 @@
 set -euo pipefail
 set -x
 
+if [ -z "${GPG_KEY_ID-}" ]; then
+    echo 'WARNING: Package signing disabled (GPG_KEY_ID not set)!'
+    exit 0
+fi
+
 sed '~passphrase-file~d' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
 if [ -f /gpg/passphrase ]; then
     echo 'passphrase-file /gpg/passphrase' >> /home/aur/.gnupg/gpg.conf
     echo 'passphrase-file /gpg/passphrase' >> /root/.gnupg/gpg.conf
 fi
 
-if [ -f /gpg/key ]; then
-    # Fixed key file
-elif [ -f /gpg/pin ]; then
-    gpgconf --kill gpg-agent
-    gpg --use-agent --card-status
-    gpg --use-agent --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
-else
-    echo 'WARNING: Package signing disabled!'
-    exit 0
-fi
+gpgconf --kill gpg-agent
 
-if [ -z "${GPG_KEY_ID-}" ]; then
-    echo 'GPG_KEY_ID is not set, but package signing is enabled'
-    exit 1
+if [ -f /gpg/key ]; then
+    gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
+else
+    gpg --card-status
 fi
+gpg --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/gpgtest.sh

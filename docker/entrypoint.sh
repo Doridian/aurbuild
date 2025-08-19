@@ -34,10 +34,6 @@ subuilder() {
     fi
 }
 
-if [ -f /gpg/key ]; then
-    subuilder gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
-fi
-
 subuilder /aur/gpgtest.sh
 
 BUILD_TIMESPEC="${BUILD_TIMESPEC-14:14}"
