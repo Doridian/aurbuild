@@ -10,9 +10,6 @@ RUN useradd aur && \
     chown aur:aur /home/aur /aur /aur/tmp /home/aur/.gnupg && \
     chmod 700 /home/aur/.gnupg /home/aur /aur/tmp
 
-COPY --chown=aur:aur docker/dotgnupg/ /home/aur/.gnupg/
-COPY --chown=root:root docker/dotgnupg/ /root/.gnupg/
-
 COPY docker/ /aur
 ENV HOME=/home/aur
 WORKDIR /aur/keys/pgp
@@ -56,6 +53,9 @@ RUN pacman -Syu --noconfirm --needed \
 RUN cat /aur/pacman.conf.late >> /etc/pacman.conf && \
         rm -f /etc/pacman.conf.late && \
         /aur/init.sh
+
+COPY --chown=aur:aur docker/dotgnupg/ /home/aur/.gnupg/
+COPY --chown=root:root docker/dotgnupg/ /root/.gnupg/
 
 VOLUME /aur/cache
 VOLUME /aur/repo
