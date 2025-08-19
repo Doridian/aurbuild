@@ -7,10 +7,9 @@ if [ -z "${GPG_KEY_ID-}" ]; then
     exit 0
 fi
 
-sed '/passphrase-file/d' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
+sed '/passphrase-file/d' -i /home/aur/.gnupg/gpg.conf
 if [ -f /gpg/passphrase ]; then
     echo 'passphrase-file /gpg/passphrase' >> /home/aur/.gnupg/gpg.conf
-    echo 'passphrase-file /gpg/passphrase' >> /root/.gnupg/gpg.conf
 fi
 
 gpgconf --kill gpg-agent

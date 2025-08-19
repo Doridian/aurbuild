@@ -35,6 +35,7 @@ subuilder() {
 }
 
 subuilder /aur/gpgtest.sh
+cat /home/aur/.gnupg/gpg.conf > /root/.gnupg/gpg.conf
 
 BUILD_TIMESPEC="${BUILD_TIMESPEC-14:14}"
 
