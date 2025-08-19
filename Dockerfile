@@ -13,8 +13,6 @@ RUN useradd aur && \
 COPY --chown=aur:aur docker/dotgnupg/ /home/aur/.gnupg/
 COPY --chown=root:root docker/dotgnupg/ /root/.gnupg/
 
-RUN ls -la /home/aur/.gnupg /root/.gnupg && exit 1
-
 COPY docker/ /aur
 ENV HOME=/home/aur
 WORKDIR /aur/keys/pgp
