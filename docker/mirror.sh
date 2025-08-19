@@ -15,8 +15,6 @@ HAD_ERRORS=""
 HAD_FATAL_ERRORS=""
 UPDATED_PACKAGES=""
 
-/aur/gpgtest.sh
-
 copypkg() {
     # Fail if no artifacts
     ls *.pkg.tar* 2>/dev/null >/dev/null || false
