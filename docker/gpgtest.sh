@@ -2,10 +2,11 @@
 set -euo pipefail
 set -x
 
-if [ -f /gpg/pin ]; then
-    sed 's~#passphrase-file /gpg/pin~passphrase-file /gpg/pin~' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
+if [ -f /gpg/passphrase ]; then
+    echo 'passphrase-file /gpg/passphrase' >> /home/aur/.gnupg/gpg.conf
+    echo 'passphrase-file /gpg/passphrase' >> /root/.gnupg/gpg.conf
 else
-    sed 's~passphrase-file /gpg/pin~#passphrase-file /gpg/pin~' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
+    sed '~passphrase-file~d' -i /home/aur/.gnupg/gpg.conf /root/.gnupg/gpg.conf
 fi
 
 if [ -f /gpg/key ]; then
