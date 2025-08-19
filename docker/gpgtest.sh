@@ -5,7 +5,7 @@ set -x
 if [ -f /gpg/pin ]; then
     gpgconf --kill gpg-agent
     gpg --use-agent --card-status
-    gpg --use-agent --pinentry-mode loopback --passphrase-file /gpg/pin --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
+    gpg --use-agent --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/packages.txt
 elif [ -f /gpg/key ]; then
     # Fixed key file
     true
