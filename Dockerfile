@@ -37,7 +37,6 @@ RUN pacman -Syu --noconfirm --needed \
             'https://mirror.cachyos.org/repo/x86_64/cachyos/pacman-7.0.0.r7.g1f38429-1-x86_64.pkg.tar.zst'
 
 COPY docker/pacman.conf /etc/pacman.conf
-COPY docker/pacman.conf.late /etc/pacman.conf.late
 
 RUN pacman -Syu --noconfirm --needed \
             cmake \
@@ -53,7 +52,7 @@ RUN pacman -Syu --noconfirm --needed \
             ccid \
             gocryptfs
 
-RUN cat /etc/pacman.conf.late >> /etc/pacman.conf && \
+RUN cat /aur/pacman.conf.late >> /etc/pacman.conf && \
         rm -f /etc/pacman.conf.late && \
         /aur/init.sh
 
