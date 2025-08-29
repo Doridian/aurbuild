@@ -27,6 +27,7 @@ copypkg() {
 }
 
 buildpkg() {
+    local pkg="$1"
     if [ -z "$pkg" ]; then
         return 0
     fi
@@ -35,7 +36,8 @@ buildpkg() {
         return 0
     fi
 
-    pkgsubdir=''
+    local pkgsubdir=''
+    local gitrepo
     if [[ "$pkg" == *"!"* ]]; then
         gitrepo="$(echo "$pkg" | cut -d'!' -f1)"
         pkgsubdir="$(echo "$pkg" | cut -d'!' -f2)"
@@ -48,18 +50,21 @@ buildpkg() {
         gitrepo="https://aur.archlinux.org/$pkg.git"
     fi
 
-    pkgroot="${CACHEDIR}/$pkg"
-    pkgdir="$pkgroot"
+    local pkgroot="${CACHEDIR}/$pkg"
+    local pkgdir="$pkgroot"
     if [ ! -z "$pkgsubdir" ]; then
         pkgdir="$pkgroot/$pkgsubdir"
     fi
 
     echo "[DIAG] pkg=$pkg pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo"
 
+    local trynum
+    local update_ok=0
     for trynum in `seq 1 3`; do
         if [ ! -d "$pkgroot" ]; then
             echo "Cloning $pkg"
             if git clone -- "$gitrepo" "$pkgroot"; then
+                update_ok=1
                 break
             else
                 echo "Failed to clone $pkg"
@@ -68,6 +73,7 @@ buildpkg() {
             echo "Updating $pkg"
             git -C "$pkgroot" remote set-url origin "$gitrepo"
             if git -C "$pkgroot" fetch; then
+                update_ok=1
                 break
             else
                 echo "Failed to update $pkg"
@@ -75,13 +81,18 @@ buildpkg() {
         fi
     done
 
-    GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
+    if [ "$update_ok" -eq 0 ]; then
+        echo "Fatal failure on git fetching $pkg"
+        return 1
+    fi
 
-    OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
-    NEW_GITREV="$(git -C "$pkgroot" rev-parse "${GIT_BRANCH}")"
+    local GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
 
-    OLD_PKGVER="$(cat "$pkgdir/.done.pkgver" 2>/dev/null || true)"
-    NEW_PKGVER="$(/aur/getver.sh "$pkgdir" update)"
+    local OLD_GITREV="$(cat "$pkgdir/.done.gitrev" 2>/dev/null || true)"
+    local NEW_GITREV="$(git -C "$pkgroot" rev-parse "${GIT_BRANCH}")"
+
+    local OLD_PKGVER="$(cat "$pkgdir/.done.pkgver" 2>/dev/null || true)"
+    local NEW_PKGVER="$(/aur/getver.sh "$pkgdir" update)"
 
     for trynum in `seq 1 2`; do
         # This seems a little hacky to put in the loop...
@@ -124,7 +135,7 @@ buildpkg() {
 }
 
 for pkg in `cat /aur/packages.txt`; do
-    if ! buildpkg; then
+    if ! buildpkg "${pkg}"; then
         HAD_ERRORS="${HAD_ERRORS} ${pkg}"
     fi
 done
