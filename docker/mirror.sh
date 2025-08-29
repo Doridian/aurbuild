@@ -26,13 +26,13 @@ copypkg() {
     sudo pacman -Sy --noconfirm || true
 }
 
-for pkg in `cat /aur/packages.txt`; do
+buildpkg() {
     if [ -z "$pkg" ]; then
-        continue
+        return 0
     fi
     pkg="$(echo "$pkg" | tr -d '\r\n\t ')"
     if [ "${pkg:0:1}" = "#" ]; then
-        continue
+        return 0
     fi
 
     pkgsubdir=''
@@ -56,14 +56,24 @@ for pkg in `cat /aur/packages.txt`; do
 
     echo "[DIAG] pkg=$pkg pkgroot=$pkgroot pkgdir=$pkgdir gitrepo=$gitrepo"
 
-    if [ ! -d "$pkgroot" ]; then
-        echo "Cloning $pkg"
-        git clone -- "$gitrepo" "$pkgroot"
-    else
-        echo "Updating $pkg"
-        git -C "$pkgroot" remote set-url origin "$gitrepo"
-        git -C "$pkgroot" fetch
-    fi
+    for trynum in `seq 1 3`; do
+        if [ ! -d "$pkgroot" ]; then
+            echo "Cloning $pkg"
+            if git clone -- "$gitrepo" "$pkgroot"; then
+                break
+            else
+                echo "Failed to clone $pkg"
+            fi
+        else
+            echo "Updating $pkg"
+            git -C "$pkgroot" remote set-url origin "$gitrepo"
+            if git -C "$pkgroot" fetch; then
+                break
+            else
+                echo "Failed to update $pkg"
+            fi
+        fi
+    done
 
     GIT_BRANCH="origin/$(git -C "$pkgroot" branch --show-current)"
 
@@ -100,7 +110,7 @@ for pkg in `cat /aur/packages.txt`; do
             git clean -fdx
         else
             echo "Failed to build $pkg after retrying, giving up"
-            HAD_ERRORS="${HAD_ERRORS} ${pkg}"
+            return 1
         fi
     done
 
@@ -110,6 +120,12 @@ for pkg in `cat /aur/packages.txt`; do
     date > "$pkgroot/.lastcheck"
     if [ ! -z "$pkgsubdir" ]; then
         date > "$pkgdir/.lastcheck"
+    fi
+}
+
+for pkg in `cat /aur/packages.txt`; do
+    if ! buildpkg; then
+        HAD_ERRORS="${HAD_ERRORS} ${pkg}"
     fi
 done
 
