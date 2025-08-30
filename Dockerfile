@@ -60,4 +60,8 @@ RUN cat /aur/pacman.conf.late >> /etc/pacman.conf && \
 VOLUME /aur/cache
 VOLUME /aur/repo
 
+USER aur
+RUN git config --global core.excludesFile '/aur/gitignore'
+USER root
+
 ENTRYPOINT [ "/aur/entrypoint.sh" ]
