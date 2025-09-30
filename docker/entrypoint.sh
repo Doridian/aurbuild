@@ -12,9 +12,9 @@ if [ -z "${PGROUP-}" ]; then
 fi
 
 mkdir -p /home/aur/.gnupg /aur/repo /aur/cache
-chown -R "$PUSER:$PGROUP" /home/aur /aur/repo /aur/cache
+chown -R "$PUSER:$PGROUP" /home/aur /aur/repo /aur/cache /aur/tmp
 chown "$PUSER:$PGROUP" /aur
-chmod 700 /home/aur /home/aur/.gnupg
+chmod 700 /home/aur /home/aur/.gnupg /aur/tmp
 
 rm -fv /var/lib/pacman/db.lck
 
