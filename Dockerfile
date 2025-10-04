@@ -16,16 +16,16 @@ COPY --chown=root:root docker/dotgnupg/ /root/.gnupg/
 COPY docker/ /aur
 ENV HOME=/home/aur
 WORKDIR /aur/keys/pgp
-RUN find -type f -exec gpg --import {} \;
+RUN find -type f -exec gpg --batch --no-tty --import {} \;
 WORKDIR /aur
 
 ENV FOXDENAUR_KEY_ID=45B097915F67C9D68C19E5747B0F7660EAEC8D49
 ENV CACHYOS_KEY_ID=F3B607488DB35A47
 
 RUN pacman-key --init && \
-    gpg --export --armor "${FOXDENAUR_KEY_ID}" | pacman-key --add - && \
+    gpg --batch --no-tty --export --armor "${FOXDENAUR_KEY_ID}" | pacman-key --add - && \
     pacman-key --lsign-key "${FOXDENAUR_KEY_ID}" && \
-    gpg --export --armor "${CACHYOS_KEY_ID}" | pacman-key --add - && \
+    gpg --batch --no-tty --export --armor "${CACHYOS_KEY_ID}" | pacman-key --add - && \
     pacman-key --lsign-key "${CACHYOS_KEY_ID}"
 
 RUN pacman -Syu --noconfirm --needed \

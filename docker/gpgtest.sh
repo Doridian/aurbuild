@@ -15,8 +15,8 @@ fi
 gpgconf --kill gpg-agent
 
 if [ -f /gpg/key ]; then
-    gpg --no-tty --batch --allow-secret-key-import --yes --import /gpg/key
+    gpg --batch --no-tty --allow-secret-key-import --yes --import /gpg/key
 else
-    gpg --card-status
+    gpg --batch --no-tty --card-status
 fi
-gpg --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/gpgtest.sh
+gpg --batch --no-tty --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/gpgtest.sh

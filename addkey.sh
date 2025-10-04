@@ -2,5 +2,5 @@
 set -euo pipefail
 set -x
 
-gpg --recv-keys "$1"
-gpg --export --armor "$1" > "./docker/keys/pgp/$1.asc"
+gpg --batch --no-tty --recv-keys "$1"
+gpg --batch --no-tty --export --armor "$1" > "./docker/keys/pgp/$1.asc"
