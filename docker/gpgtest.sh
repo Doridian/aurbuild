@@ -19,4 +19,4 @@ if [ -f /gpg/key ]; then
 else
     gpg --batch --no-tty --card-status
 fi
-gpg --no-tty --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/gpgtest.sh
+gpg --batch --no-tty --yes --detach-sign -u "${GPG_KEY_ID}" --output /dev/null /aur/gpgtest.sh
