@@ -4,8 +4,9 @@ ENV PUID=1000
 ENV PGID=1000
 ENV UNSHARE_MOUNT_BUILDER=
 
-RUN useradd aur && \
-    cp /etc/sudoers /etc/sudoers.stock && \
+RUN cp -p /etc/sudoers /etc/sudoers.stock && \
+    cp -p /etc/shadow /etc/shadow.stock && \
+    useradd aur && \
     mkdir -p /home/aur /aur /aur/tmp /home/aur/.gnupg && \
     chown aur:aur /home/aur /aur /aur/tmp /home/aur/.gnupg && \
     chmod 700 /home/aur/.gnupg /home/aur /aur/tmp

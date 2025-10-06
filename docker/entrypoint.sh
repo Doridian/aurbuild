@@ -16,8 +16,10 @@ chown -R "$PUSER:$PGROUP" /home/aur /aur/repo /aur/cache /aur/tmp
 chown "$PUSER:$PGROUP" /aur
 chmod 700 /home/aur /home/aur/.gnupg /aur/tmp
 
-cp -f /etc/sudoers.stock /etc/sudoers
+cp -pf /etc/sudoers.stock /etc/sudoers
 echo "${PUSER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+cp -pf /etc/shadow.stock /etc/shadow
+echo "${PUSER}:!:1::::::" >> /etc/shadow
 
 rm -fv /var/lib/pacman/db.lck
 
