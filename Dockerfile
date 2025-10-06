@@ -5,7 +5,7 @@ ENV PGID=1000
 ENV UNSHARE_MOUNT_BUILDER=
 
 RUN useradd aur && \
-    echo "aur ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    cp /etc/sudoers /etc/sudoers.stock && \
     mkdir -p /home/aur /aur /aur/tmp /home/aur/.gnupg && \
     chown aur:aur /home/aur /aur /aur/tmp /home/aur/.gnupg && \
     chmod 700 /home/aur/.gnupg /home/aur /aur/tmp
