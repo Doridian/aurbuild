@@ -2,24 +2,12 @@
 set -euo pipefail
 set -x
 
-if [ -z "${PUSER-}" ]; then
-    usermod -u "${PUID}" aur
-    PUSER=aur
-fi
-if [ -z "${PGROUP-}" ]; then
-    groupmod -g "${PGID}" aur
-    PGROUP=aur
-fi
-
+usermod -u "${PUID}" aur
+groupmod -g "${PGID}" aur
 mkdir -p /home/aur/.gnupg /aur/repo /aur/cache
-chown -R "$PUSER:$PGROUP" /home/aur /aur/repo /aur/cache /aur/tmp
-chown "$PUSER:$PGROUP" /aur
+chown -R aur:aur /home/aur /aur/repo /aur/cache
+chown aur:aur /aur
 chmod 700 /home/aur /home/aur/.gnupg /aur/tmp
-
-cp -pf /etc/sudoers.stock /etc/sudoers
-echo "${PUSER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
-cp -pf /etc/shadow.stock /etc/shadow
-echo "${PUSER}:!:1::::::" >> /etc/shadow
 
 rm -fv /var/lib/pacman/db.lck
 
@@ -35,7 +23,7 @@ pacman_clear() {
 }
 
 _subuilder_raw() {
-    sudo --preserve-env=GPG_KEY_ID -H -u "$PUSER" "$@"
+    sudo --preserve-env=GPG_KEY_ID -H -u aur "$@"
 }
 
 subuilder() {
