@@ -4,8 +4,10 @@ set -x
 
 usermod -u "${PUID}" aur
 groupmod -g "${PGID}" aur
-mkdir -p /home/aur/.gnupg /aur/repo /aur/cache
-chown -R aur:aur /home/aur /aur/repo /aur/cache
+
+mkdir -p /home/aur/.gnupg /aur/repo /aur/cache /aur/tmp/gpg
+cp /gpg/* /aur/tmp/gpg/
+chown -R aur:aur /home/aur /aur/repo /aur/cache /aur/tmp
 chown aur:aur /aur
 chmod 700 /home/aur /home/aur/.gnupg /aur/tmp
 
@@ -33,11 +35,6 @@ subuilder() {
         _subuilder_raw unshare -c --keep-caps -m "$@"
     fi
 }
-
-cp -r /gpg /aur/tmp/
-chown -R aur:aur /aur/tmp/gpg
-chmod 700 /aur/tmp/gpg
-chmod 600 /aur/tmp/gpg/*
 
 subuilder /aur/gpgtest.sh
 cat /home/aur/.gnupg/gpg.conf > /root/.gnupg/gpg.conf
