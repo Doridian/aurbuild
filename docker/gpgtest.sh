@@ -8,14 +8,14 @@ if [ -z "${GPG_KEY_ID-}" ]; then
 fi
 
 sed '/passphrase-file/d' -i /home/aur/.gnupg/gpg.conf
-if [ -f /gpg/passphrase ]; then
-    echo 'passphrase-file /gpg/passphrase' >> /home/aur/.gnupg/gpg.conf
+if [ -f /aur/tmp/gpg/passphrase ]; then
+    echo 'passphrase-file /aur/tmp/gpg/passphrase' >> /home/aur/.gnupg/gpg.conf
 fi
 
 gpgconf --kill gpg-agent
 
-if [ -f /gpg/key ]; then
-    gpg --batch --no-tty --allow-secret-key-import --yes --import /gpg/key
+if [ -f /aur/tmp/gpg/key ]; then
+    gpg --batch --no-tty --allow-secret-key-import --yes --import /aur/tmp/gpg/key
 else
     gpg --batch --no-tty --card-status
 fi

@@ -34,6 +34,11 @@ subuilder() {
     fi
 }
 
+cp -r /gpg /aur/tmp/
+chown -R aur:aur /aur/tmp/gpg
+chmod 700 /aur/tmp/gpg
+chmod 600 /aur/tmp/gpg/*
+
 subuilder /aur/gpgtest.sh
 cat /home/aur/.gnupg/gpg.conf > /root/.gnupg/gpg.conf
 
